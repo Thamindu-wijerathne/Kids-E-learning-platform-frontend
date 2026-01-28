@@ -3,10 +3,10 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
-import SignInModal from './signin-modal';
+import { useAuth } from '@/contexts/auth-context';
 
 export default function Header() {
-  const [signInOpen, setSignInOpen] = useState(false);
+  const { isAuthenticated, logout, user } = useAuth();
 
   return (
     <>
@@ -34,17 +34,40 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* Sign In Button */}
-          <Button
-            onClick={() => setSignInOpen(true)}
-            className="bg-accent hover:bg-yellow-400 text-foreground font-bold rounded-xl"
-          >
-            Sign In
-          </Button>
+          {/* Auth Section */}
+          <div className="flex items-center gap-4">
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                <span className="hidden sm:inline font-bold text-accent">Hi, {user?.name}! 👋</span>
+                <Button
+                  onClick={logout}
+                  variant="outline"
+                  className="border-white text-white hover:bg-white/10 font-bold rounded-xl"
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link href="/login" className="hidden sm:block">
+                  <Button variant="ghost" className="text-white hover:bg-white/10 font-bold px-6">
+                    Log In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button
+                    className="bg-accent hover:bg-yellow-400 text-foreground font-bold rounded-xl shadow-lg shadow-yellow-500/20 px-6"
+                  >
+                    Sign Up
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
-      <SignInModal isOpen={signInOpen} onClose={() => setSignInOpen(false)} />
+      {/* Modal removed because we use dedicated pages now, but keeping for reference if needed elsewhere */}
     </>
   );
 }
