@@ -33,20 +33,20 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <main className="min-h-screen bg-gradient-to-br from-background via-white to-secondary/10">
             <Header />
 
             <section className="px-4 py-20 flex items-center justify-center">
                 <div className="w-full max-w-[440px] relative">
                     {/* Decorative Elements */}
-                    <div className="absolute -top-12 -left-12 w-24 h-24 bg-yellow-200 rounded-full blur-2xl opacity-40 animate-pulse"></div>
-                    <div className="absolute -bottom-12 -right-12 w-32 h-32 bg-purple-200 rounded-full blur-2xl opacity-40 animate-pulse" style={{ animationDelay: '1s' }}></div>
+                    <div className="absolute -top-12 -left-12 w-24 h-24 bg-secondary/40 rounded-full blur-2xl opacity-40 animate-pulse"></div>
+                    <div className="absolute -bottom-12 -right-12 w-32 h-32 bg-primary/20 rounded-full blur-2xl opacity-40 animate-pulse" style={{ animationDelay: '1s' }}></div>
 
                     <Card className="p-10 border-none shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] backdrop-blur-sm bg-white/90 relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-primary"></div>
 
                         <div className="mb-10 text-center relative">
-                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-100 to-purple-100 rounded-3xl text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-500 shadow-inner">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-3xl text-5xl mb-6 transform group-hover:scale-110 transition-transform duration-500 shadow-inner">
                                 🚀
                             </div>
                             <h1 className="text-4xl font-extrabold text-slate-800 mb-3 tracking-tight">
@@ -74,7 +74,7 @@ export default function LoginPage() {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-blue-400 focus:ring-0 transition-all text-lg placeholder:text-slate-300"
+                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-primary focus:ring-0 transition-all text-lg placeholder:text-slate-300"
                                         placeholder="name@email.com"
                                         required
                                     />
@@ -86,7 +86,7 @@ export default function LoginPage() {
                                     <label className="text-sm font-bold text-slate-700">
                                         Password
                                     </label>
-                                    <Link href="#" className="text-sm font-bold text-blue-500 hover:text-blue-600 transition-colors">
+                                    <Link href="#" className="text-sm font-bold text-primary hover:text-primary/80 transition-colors">
                                         Forgot?
                                     </Link>
                                 </div>
@@ -103,7 +103,7 @@ export default function LoginPage() {
                             <Button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full h-14 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-2xl text-lg shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 transition-all transform active:scale-95 disabled:opacity-50"
+                                className="w-full h-14 bg-gradient-to-r from-primary to-secondary hover:brightness-110 text-white font-bold rounded-2xl text-lg shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all transform active:scale-95 disabled:opacity-50"
                             >
                                 {isLoading ? (
                                     <div className="flex items-center gap-2">
@@ -119,7 +119,7 @@ export default function LoginPage() {
                         <div className="mt-10 pt-8 border-t border-slate-100 text-center">
                             <p className="text-slate-500 font-medium">
                                 Don't have an account?{' '}
-                                <Link href="/signup" className="text-blue-500 font-bold hover:underline underline-offset-4">
+                                <Link href="/signup" className="text-primary font-bold hover:underline underline-offset-4">
                                     Sign up for free
                                 </Link>
                             </p>
@@ -131,11 +131,11 @@ export default function LoginPage() {
                             <div className="flex flex-col gap-2">
                                 <code className="text-sm text-slate-600 font-bold flex justify-between">
                                     <span>Email:</span>
-                                    <span className="text-blue-500">test@gmail.com</span>
+                                    <span className="text-primary">test@gmail.com</span>
                                 </code>
                                 <code className="text-sm text-slate-600 font-bold flex justify-between">
                                     <span>Pass:</span>
-                                    <span className="text-blue-500">test</span>
+                                    <span className="text-primary">test</span>
                                 </code>
                             </div>
                         </div>

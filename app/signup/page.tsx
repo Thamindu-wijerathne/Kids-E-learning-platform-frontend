@@ -34,20 +34,20 @@ export default function SignupPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+        <main className="min-h-screen bg-gradient-to-br from-background via-white to-secondary/10">
             <Header />
 
             <section className="px-4 py-16 flex items-center justify-center">
                 <div className="w-full max-w-[480px] relative">
                     {/* Decorative Elements */}
-                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-pink-200 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-                    <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-blue-200 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
+                    <div className="absolute -top-12 -right-12 w-32 h-32 bg-secondary/30 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+                    <div className="absolute -bottom-12 -left-12 w-28 h-28 bg-primary/20 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1.5s' }}></div>
 
                     <Card className="p-10 border-none shadow-[0_20px_50px_rgba(0,0,0,0.1)] rounded-[32px] backdrop-blur-sm bg-white/95 relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400"></div>
+                        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-secondary via-primary to-secondary"></div>
 
                         <div className="mb-10 text-center relative">
-                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-pink-100 to-purple-100 rounded-3xl text-5xl mb-6 shadow-inner transform group-hover:rotate-12 transition-transform duration-500">
+                            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-3xl text-5xl mb-6 shadow-inner transform group-hover:rotate-12 transition-transform duration-500">
                                 ✨
                             </div>
                             <h1 className="text-4xl font-extrabold text-slate-800 mb-3 tracking-tight">
@@ -75,7 +75,7 @@ export default function SignupPage() {
                                         type="text"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-purple-400 focus:ring-0 transition-all text-lg placeholder:text-slate-300"
+                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-primary focus:ring-0 transition-all text-lg placeholder:text-slate-300"
                                         placeholder="Superhero Name"
                                         required
                                     />
@@ -89,7 +89,7 @@ export default function SignupPage() {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-purple-400 focus:ring-0 transition-all text-lg placeholder:text-slate-300"
+                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-primary focus:ring-0 transition-all text-lg placeholder:text-slate-300"
                                         placeholder="name@email.com"
                                         required
                                     />
@@ -103,7 +103,7 @@ export default function SignupPage() {
                                         type="password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
-                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-purple-400 focus:ring-0 transition-all text-lg placeholder:text-slate-300"
+                                        className="h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-primary focus:ring-0 transition-all text-lg placeholder:text-slate-300"
                                         placeholder="••••••••"
                                         required
                                     />
@@ -114,7 +114,7 @@ export default function SignupPage() {
                                 <Button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full h-14 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold rounded-2xl text-lg shadow-lg shadow-purple-200 hover:shadow-xl hover:shadow-purple-300 transition-all transform active:scale-95 disabled:opacity-50"
+                                    className="w-full h-14 bg-gradient-to-r from-primary to-secondary hover:brightness-110 text-white font-bold rounded-2xl text-lg shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all transform active:scale-95 disabled:opacity-50"
                                 >
                                     {isLoading ? (
                                         <div className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export default function SignupPage() {
                         <div className="mt-10 pt-8 border-t border-slate-100 text-center">
                             <p className="text-slate-500 font-medium">
                                 Already have an account?{' '}
-                                <Link href="/login" className="text-purple-500 font-bold hover:underline underline-offset-4">
+                                <Link href="/login" className="text-secondary-foreground font-bold hover:underline underline-offset-4 bg-secondary/20 px-2 rounded">
                                     Log in here
                                 </Link>
                             </p>

@@ -16,7 +16,7 @@ export default function GamesPage() {
       name: 'Letter Trace',
       description: 'Learn to write letters beautifully with guided exercises',
       emoji: '✏️',
-      color: 'bg-blue-400',
+      color: 'bg-primary/40',
       category: 'handwriting',
     },
     {
@@ -24,7 +24,7 @@ export default function GamesPage() {
       name: 'Shape Match',
       description: 'Match shapes and patterns to complete puzzles',
       emoji: '🟠',
-      color: 'bg-yellow-300',
+      color: 'bg-secondary/60',
       category: 'patterns',
     },
     {
@@ -32,7 +32,7 @@ export default function GamesPage() {
       name: 'Number Quest',
       description: 'Count and solve exciting math puzzles',
       emoji: '🔢',
-      color: 'bg-green-400',
+      color: 'bg-accent/40',
       category: 'math',
     },
     {
@@ -40,7 +40,7 @@ export default function GamesPage() {
       name: 'Color Explorer',
       description: 'Learn colors by sorting and matching items',
       emoji: '🎨',
-      color: 'bg-purple-400',
+      color: 'bg-primary/60',
       category: 'colors',
     },
     {
@@ -48,7 +48,7 @@ export default function GamesPage() {
       name: 'Alphabet Adventure',
       description: 'Journey through letters and word building',
       emoji: '📚',
-      color: 'bg-red-400',
+      color: 'bg-secondary/40',
       category: 'letters',
     },
     {
@@ -56,7 +56,7 @@ export default function GamesPage() {
       name: 'Memory Master',
       description: 'Test your memory with fun card matching games',
       emoji: '🧠',
-      color: 'bg-indigo-400',
+      color: 'bg-accent/60',
       category: 'memory',
     },
     {
@@ -64,7 +64,7 @@ export default function GamesPage() {
       name: 'Puzzle Pal',
       description: 'Solve logic puzzles and brain teasers',
       emoji: '🧩',
-      color: 'bg-orange-400',
+      color: 'bg-primary/20',
       category: 'puzzles',
     },
     {
@@ -72,7 +72,7 @@ export default function GamesPage() {
       name: 'Sound Safari',
       description: 'Discover animals and learn their sounds',
       emoji: '🦁',
-      color: 'bg-amber-400',
+      color: 'bg-secondary/80',
       category: 'sounds',
     },
   ];
@@ -94,7 +94,7 @@ export default function GamesPage() {
   });
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
+    <main className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <Header />
 
       {/* Page Header */}
@@ -134,11 +134,10 @@ export default function GamesPage() {
                   key={cat.id}
                   variant={selectedCategory === cat.id ? 'default' : 'outline'}
                   onClick={() => setSelectedCategory(cat.id)}
-                  className={`rounded-full px-6 py-5 font-semibold transition-all ${
-                    selectedCategory === cat.id
+                  className={`rounded-full px-6 py-5 font-semibold transition-all ${selectedCategory === cat.id
                       ? 'bg-primary text-white'
-                      : 'border-2 border-primary text-primary hover:bg-blue-50'
-                  }`}
+                      : 'border-2 border-primary text-primary hover:bg-primary/10'
+                    }`}
                 >
                   {cat.emoji} {cat.label}
                 </Button>

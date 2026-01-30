@@ -42,7 +42,7 @@ export default function Header() {
                 <Button
                   onClick={logout}
                   variant="outline"
-                  className="border-white text-white hover:bg-white/10 font-bold rounded-xl"
+                  className="border-white text-black hover:text-white hover:bg-white/10 font-bold rounded-xl "
                 >
                   Logout
                 </Button>
@@ -56,7 +56,7 @@ export default function Header() {
                 </Link>
                 <Link href="/signup">
                   <Button
-                    className="bg-accent hover:bg-yellow-400 text-foreground font-bold rounded-xl shadow-lg shadow-yellow-500/20 px-6"
+                    className="bg-secondary hover:brightness-110 text-secondary-foreground font-bold rounded-xl shadow-lg shadow-secondary/20 px-6"
                   >
                     Sign Up
                   </Button>

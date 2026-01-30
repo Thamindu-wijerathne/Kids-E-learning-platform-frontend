@@ -47,7 +47,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
   return (
     <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-md relative overflow-hidden animate-in fade-in zoom-in duration-300">
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"></div>
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-primary"></div>
 
         {/* Header */}
         <div className="flex items-center justify-between p-8 pb-4">
@@ -83,7 +83,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Superhero Name"
-                className="h-12 rounded-xl border-2 border-slate-100 focus:border-purple-400"
+                className="h-12 rounded-xl border-2 border-slate-100 focus:border-primary"
                 required
               />
             </div>
@@ -96,7 +96,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@email.com"
-              className="h-12 rounded-xl border-2 border-slate-100 focus:border-blue-400"
+              className="h-12 rounded-xl border-2 border-slate-100 focus:border-primary"
               required
             />
           </div>
@@ -108,7 +108,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="h-12 rounded-xl border-2 border-slate-100 focus:border-blue-400"
+              className="h-12 rounded-xl border-2 border-slate-100 focus:border-primary"
               required
             />
           </div>
@@ -116,7 +116,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-12 bg-primary hover:bg-secondary text-white font-bold rounded-xl mt-4 shadow-lg shadow-blue-500/20"
+            className="w-full h-12 bg-primary hover:bg-secondary text-white font-bold rounded-xl mt-4 shadow-lg shadow-primary/20"
           >
             {loading ? 'Processing...' : (mode === 'login' ? 'Login 🚀' : 'Create Account ✨')}
           </Button>
@@ -125,7 +125,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
             <button
               type="button"
               onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-              className="text-sm font-bold text-blue-500 hover:underline underline-offset-4"
+              className="text-sm font-bold text-primary hover:underline underline-offset-4"
             >
               {mode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Login"}
             </button>
