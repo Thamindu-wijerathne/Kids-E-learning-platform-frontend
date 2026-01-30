@@ -6,76 +6,13 @@ import GameCard from '@/components/game-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+import { gamesList } from '@/lib/games';
+
 export default function GamesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const games = [
-    {
-      id: 1,
-      name: 'Letter Trace',
-      description: 'Learn to write letters beautifully with guided exercises',
-      emoji: '✏️',
-      color: 'bg-primary/40',
-      category: 'handwriting',
-    },
-    {
-      id: 2,
-      name: 'Shape Match',
-      description: 'Match shapes and patterns to complete puzzles',
-      emoji: '🟠',
-      color: 'bg-secondary/60',
-      category: 'patterns',
-    },
-    {
-      id: 3,
-      name: 'Number Quest',
-      description: 'Count and solve exciting math puzzles',
-      emoji: '🔢',
-      color: 'bg-accent/40',
-      category: 'math',
-    },
-    {
-      id: 4,
-      name: 'Color Explorer',
-      description: 'Learn colors by sorting and matching items',
-      emoji: '🎨',
-      color: 'bg-primary/60',
-      category: 'colors',
-    },
-    {
-      id: 5,
-      name: 'Alphabet Adventure',
-      description: 'Journey through letters and word building',
-      emoji: '📚',
-      color: 'bg-secondary/40',
-      category: 'letters',
-    },
-    {
-      id: 6,
-      name: 'Memory Master',
-      description: 'Test your memory with fun card matching games',
-      emoji: '🧠',
-      color: 'bg-accent/60',
-      category: 'memory',
-    },
-    {
-      id: 7,
-      name: 'Puzzle Pal',
-      description: 'Solve logic puzzles and brain teasers',
-      emoji: '🧩',
-      color: 'bg-primary/20',
-      category: 'puzzles',
-    },
-    {
-      id: 8,
-      name: 'Sound Safari',
-      description: 'Discover animals and learn their sounds',
-      emoji: '🦁',
-      color: 'bg-secondary/80',
-      category: 'sounds',
-    },
-  ];
+  const games = gamesList;
 
   const categories = [
     { id: 'all', label: 'All Games', emoji: '🎮' },
@@ -135,8 +72,8 @@ export default function GamesPage() {
                   variant={selectedCategory === cat.id ? 'default' : 'outline'}
                   onClick={() => setSelectedCategory(cat.id)}
                   className={`rounded-full px-6 py-5 font-semibold transition-all ${selectedCategory === cat.id
-                      ? 'bg-primary text-white'
-                      : 'border-2 border-primary text-primary hover:bg-primary/10'
+                    ? 'bg-primary text-white'
+                    : 'border-2 border-primary text-primary hover:bg-primary/10'
                     }`}
                 >
                   {cat.emoji} {cat.label}

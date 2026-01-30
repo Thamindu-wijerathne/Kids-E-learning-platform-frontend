@@ -68,10 +68,10 @@ export function TetrisWord() {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!gameStarted || gamePaused || gameOver) return;
-      
+
       // Ignore if typing in input field or it's Enter key
       if (e.target instanceof HTMLInputElement || e.key === 'Enter') return;
-      
+
       // Only letters
       if (e.key.length === 1 && /[a-zA-Z]/.test(e.key)) {
         setInputWord(prev => prev + e.key.toUpperCase());
@@ -111,7 +111,7 @@ export function TetrisWord() {
 
       // Apply gravity to all blocks
       const updatedGrid = applyGravity([...currentGrid, newBlock]);
-      
+
       // Check if grid is full
       if (updatedGrid.length >= GRID_ROWS * GRID_COLS) {
         setGameOver(true);
@@ -159,7 +159,7 @@ export function TetrisWord() {
 
     try {
       const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
-      
+
       if (response.ok) {
         return true;
       } else if (response.status === 404) {
@@ -182,7 +182,7 @@ export function TetrisWord() {
   const canFormWord = (word: string): boolean => {
     const wordLetters = word.toUpperCase().split('');
     const availableLetters = grid.map(block => block.letter);
-    
+
     const letterCount: { [key: string]: number } = {};
     availableLetters.forEach(letter => {
       letterCount[letter] = (letterCount[letter] || 0) + 1;
@@ -201,7 +201,7 @@ export function TetrisWord() {
   const removeLettersFromWord = (word: string) => {
     const wordLetters = word.toUpperCase().split('');
     const newGrid = [...grid];
-    
+
     for (const letter of wordLetters) {
       const index = newGrid.findIndex(block => block.letter === letter);
       if (index !== -1) {
@@ -217,7 +217,7 @@ export function TetrisWord() {
     if (!inputWord || isValidating || !gameStarted || gamePaused) return;
 
     const word = inputWord.trim().toUpperCase();
-    
+
     if (!canFormWord(word)) {
       setMessage(`Cannot form "${word}" with available letters`);
       setInputWord('');
@@ -225,7 +225,7 @@ export function TetrisWord() {
     }
 
     const isValid = await validateWord(word);
-    
+
     if (isValid) {
       const points = word.length;
       setScore(score + points);
@@ -237,19 +237,19 @@ export function TetrisWord() {
 
   const handleCanvasWord = async (recognizedWord: string) => {
     if (!gameStarted || gamePaused) return;
-    
+
     const word = recognizedWord.trim().toUpperCase();
     if (!word) return;
 
     setInputWord(word);
-    
+
     if (!canFormWord(word)) {
       setMessage(`Cannot form "${word}" with available letters`);
       return;
     }
 
     const isValid = await validateWord(word);
-    
+
     if (isValid) {
       const points = word.length;
       setScore(score + points);
@@ -293,7 +293,7 @@ export function TetrisWord() {
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Letter Tetris</h1>
-      
+
       <div style={{ display: 'flex', gap: '40px', marginTop: '20px' }}>
         {/* Game Grid */}
         <div>
@@ -310,7 +310,7 @@ export function TetrisWord() {
           >
             {renderGrid()}
           </div>
-          
+
           <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
             {!gameStarted ? (
               <button
@@ -371,10 +371,10 @@ export function TetrisWord() {
               Final Score: {finalScore} (ready for backend)
             </p>
           )}
-          
+
           <div style={{ marginBottom: '20px' }}>
-            <p style={{ 
-              padding: '10px', 
+            <p style={{
+              padding: '10px',
               backgroundColor: message.includes('✓') ? '#d4edda' : '#f8f9fa',
               border: '1px solid #ddd',
               minHeight: '40px'
