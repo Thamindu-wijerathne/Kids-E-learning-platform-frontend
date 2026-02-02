@@ -26,7 +26,6 @@ export default function GamesPage() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
-      {/* Header */}
       <section className="px-4 py-12 md:py-16">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold text-slate-800 mb-4">
@@ -38,10 +37,8 @@ export default function GamesPage() {
         </div>
       </section>
 
-      {/* Search and Filter */}
       <section className="px-4 py-8 bg-white/50">
         <div className="max-w-6xl mx-auto">
-          {/* Search Bar */}
           <div className="mb-8">
             <input
               type="text"
@@ -52,7 +49,6 @@ export default function GamesPage() {
             />
           </div>
 
-          {/* Category Filter */}
           <div>
             <h3 className="text-sm font-semibold text-slate-500 mb-4 uppercase tracking-wide">
               Filter by Category
@@ -76,7 +72,6 @@ export default function GamesPage() {
         </div>
       </section>
 
-      {/* Games Grid */}
       <section className="px-4 py-16">
         <div className="max-w-6xl mx-auto">
           {filteredGames.length === 0 ? (

@@ -104,14 +104,12 @@ export function TetrisWord() {
     try {
       const resp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
       if (resp.ok) {
-        // Mark blocks as correct (turn green)
         setGrid(prevGrid => 
           prevGrid.map(b => 
             blocksToRemove.includes(b.id) ? { ...b, state: 'correct' as const } : b
           )
         );
 
-        // After 500ms, trigger explosion
         setTimeout(() => {
           setGrid(prevGrid => 
             prevGrid.map(b => 
@@ -119,7 +117,6 @@ export function TetrisWord() {
             )
           );
 
-          // After explosion animation (500ms), remove blocks and apply gravity
           setTimeout(() => {
             setGrid(prevGrid => 
               applyGravity(prevGrid.filter(b => !blocksToRemove.includes(b.id)))
@@ -146,7 +143,6 @@ export function TetrisWord() {
     <div className="min-h-screen bg-[#E9F5F2] p-6 md:p-12 font-sans text-slate-700 flex items-center justify-center">
       <div className="max-w-4xl w-full">
         
-        {/* Simple Minimal Header */}
         <div className="flex flex-row items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800">WordDrop</h1>
@@ -168,7 +164,6 @@ export function TetrisWord() {
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          {/* Grid Container - Minimalist Slate */}
           <div className="w-full lg:w-[320px] shrink-0">
             <div className="relative p-1.5 bg-white rounded-2xl shadow-sm">
               <div 
@@ -212,10 +207,8 @@ export function TetrisWord() {
             </div>
           </div>
 
-          {/* Input Panel - Clean White */}
           <div className="flex-1 w-full flex flex-col gap-4">
             
-            {/* Status Message */}
             <div className={`h-10 flex items-center px-4 rounded-xl text-xs font-bold transition-all ${
               message.type === 'error' ? 'text-rose-500' : 
               message.type === 'success' ? 'text-emerald-600' : 'text-slate-400'
@@ -225,7 +218,6 @@ export function TetrisWord() {
 
             <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-6">
               
-              {/* Keyboard Row - Precisely Aligned */}
               <div className="flex items-stretch gap-2 h-11">
                 <input 
                   type="text"
@@ -247,7 +239,6 @@ export function TetrisWord() {
 
               <div className="border-t border-slate-100"></div>
 
-              {/* Handwriting Area */}
               <div className="flex flex-col items-center">
                 <div className="bg-slate-50 rounded-xl p-3 w-full overflow-hidden flex justify-center">
                   <div className="scale-90 origin-center">
@@ -262,7 +253,6 @@ export function TetrisWord() {
               </div>
             </div>
 
-            {/* Hint Box */}
             <div className="px-6 py-4 bg-white/40 rounded-2xl border border-white">
               <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                 Find words using the letters in the grid. Longer words clear more space and give you more points!
