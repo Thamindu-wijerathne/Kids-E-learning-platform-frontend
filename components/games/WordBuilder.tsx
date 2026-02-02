@@ -93,7 +93,7 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level 
                 expectedWord={currentPair.word}
                 onResult={(isCorrect) => {
                     saveGameProgress({
-                        game: "word_builder",
+                        game: "Word Builder",
                         level,
                         difficulty: currentDifficulty,
                         word: currentPair.word,
@@ -112,7 +112,7 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level 
             <div className="h-10 flex items-center justify-center">
                 {feedback && (
                     <div className={`text-3xl font-bold italic animate-in zoom-in duration-300
-            ${feedback === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
+                        ${feedback === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
                         {feedback === 'correct' ? 'EXCELLENT! 🏗️' : 'TRY AGAIN! 🏗️'}
                     </div>
                 )}

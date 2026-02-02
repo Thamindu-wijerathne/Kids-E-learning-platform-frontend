@@ -7,3 +7,8 @@ export const saveGameProgressApi = async (
     const res = await api.post("/game-progress/save-progress", progress);
     return res.data;
 };
+
+export const getGameProgressApi = async (gameName: string): Promise<GameProgress> => {
+    const res = await api.get(`/game-progress/get-progress/${gameName}`);
+    return res.data;
+};
