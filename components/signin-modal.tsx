@@ -3,6 +3,7 @@
 import React from "react"
 
 import { useState } from 'react';
+import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { X } from 'lucide-react';
@@ -13,86 +14,122 @@ interface SignInModalProps {
 }
 
 export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
-  const [email, setEmail] = useState('test@gmail.com');
-  const [password, setPassword] = useState('test');
+  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { login, signup } = useAuth();
 
-  const handleSignIn = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
-    // Simulate sign-in delay
-    setTimeout(() => {
-      setLoading(false);
+    setError('');
+
+    try {
+      if (mode === 'login') {
+        await login(email, password);
+      } else {
+        await signup(name, email, password);
+      }
       onClose();
-      // Redirect or refresh to show logged-in state
-      window.location.href = '/';
-    }, 500);
+      window.location.reload();
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-md relative overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-secondary to-primary"></div>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-foreground">Sign In</h2>
+        <div className="flex items-center justify-between p-8 pb-4">
+          <div>
+            <h2 className="text-3xl font-extrabold text-slate-800">
+              {mode === 'login' ? 'Welcome Back!' : 'Join Us!'}
+            </h2>
+            <p className="text-slate-500 font-medium">
+              {mode === 'login' ? 'Login to your account' : 'Create your free account'}
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="w-10 h-10 flex items-center justify-center bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700 rounded-full transition-colors"
           >
-            <X size={24} />
+            <X size={20} />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSignIn} className="p-6 space-y-4">
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">
-              Email
-            </label>
+        <form onSubmit={handleSubmit} className="p-8 pt-4 space-y-4">
+          {error && (
+            <div className="p-3 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-xs font-bold animate-shake">
+              {error}
+            </div>
+          )}
+
+          {mode === 'signup' && (
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-slate-700 ml-1">Name</label>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Superhero Name"
+                className="h-12 rounded-xl border-2 border-slate-100 focus:border-primary"
+                required
+              />
+            </div>
+          )}
+
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 ml-1">Email</label>
             <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="test@gmail.com"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="name@email.com"
+              className="h-12 rounded-xl border-2 border-slate-100 focus:border-primary"
+              required
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">
-              Password
-            </label>
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-slate-700 ml-1">Password</label>
             <Input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="test"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="••••••••"
+              className="h-12 rounded-xl border-2 border-slate-100 focus:border-primary"
+              required
             />
           </div>
-
-          <p className="text-xs text-gray-500 bg-blue-50 p-3 rounded-lg">
-            Demo credentials: test@gmail.com / test
-          </p>
 
           <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary hover:bg-secondary text-white font-bold py-3 rounded-lg transition-colors"
+            className="w-full h-12 bg-primary hover:bg-secondary text-white font-bold rounded-xl mt-4 shadow-lg shadow-primary/20"
           >
-            {loading ? 'Signing In...' : 'Sign In'}
+            {loading ? 'Processing...' : (mode === 'login' ? 'Login 🚀' : 'Create Account ✨')}
           </Button>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full text-primary font-semibold py-2 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            Cancel
-          </button>
+          <div className="text-center pt-4">
+            <button
+              type="button"
+              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+              className="text-sm font-bold text-primary hover:underline underline-offset-4"
+            >
+              {mode === 'login' ? "Don't have an account? Sign up" : "Already have an account? Login"}
+            </button>
+          </div>
         </form>
       </div>
     </div>

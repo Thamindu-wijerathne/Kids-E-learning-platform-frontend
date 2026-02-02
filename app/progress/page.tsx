@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/auth-context';
+import { useAuth } from '@/contexts/auth-context';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/header';
 import { useEffect, useState } from 'react';
@@ -105,7 +105,7 @@ export default function Progress() {
       case 'intermediate':
         return 'text-yellow-600 bg-yellow-50';
       default:
-        return 'text-blue-600 bg-blue-50';
+        return 'text-primary bg-primary/10';
     }
   };
 
@@ -140,7 +140,7 @@ export default function Progress() {
   const averageProgress = Math.round(gameProgress.reduce((sum, game) => sum + game.progress, 0) / gameProgress.length);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
+    <main className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -181,11 +181,10 @@ export default function Progress() {
             <button
               key={option}
               onClick={() => setSortBy(option)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                sortBy === option
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${sortBy === option
                   ? 'bg-primary text-white'
-                  : 'bg-white border-2 border-primary text-primary hover:bg-blue-50'
-              }`}
+                  : 'bg-white border-2 border-primary text-primary hover:bg-primary/10'
+                }`}
             >
               {option.charAt(0).toUpperCase() + option.slice(1)}
             </button>
@@ -251,7 +250,7 @@ export default function Progress() {
           <div className="text-5xl mb-4">🌟</div>
           <h2 className="text-2xl font-bold mb-3">You're Doing Amazing!</h2>
           <p className="text-lg text-white/90 mb-6">
-            Keep up the great work! Your consistent effort is paying off. 
+            Keep up the great work! Your consistent effort is paying off.
             {averageProgress >= 75 ? " You're a superstar! 🚀" : " Just a little more to reach mastery!"}
           </p>
           <p className="text-sm text-white/80">

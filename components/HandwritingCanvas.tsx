@@ -2,19 +2,25 @@ import React, { useRef, useState, useEffect } from 'react';
 import Tesseract from 'tesseract.js';
 
 interface HandwritingCanvasProps {
-  onWordRecognized: (word: string) => void;
+  onWordRecognized?: (word: string) => void;
+  targetWord?: string;
+  onComplete?: () => void;
   width?: number;
   height?: number;
 }
 
 export const HandwritingCanvas: React.FC<HandwritingCanvasProps> = ({
   onWordRecognized,
+  targetWord,
+  onComplete,
   width = 400,
   height = 200,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [recognizedText, setRecognizedText] = useState(''); // <-- new state
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -81,11 +87,20 @@ export const HandwritingCanvas: React.FC<HandwritingCanvasProps> = ({
 
     try {
       const result = await Tesseract.recognize(canvas, 'eng', {
-        logger: (m) => console.log(m),
+        logger: (m) => console.log("tessaract : ", m),
       });
 
       const recognizedText = result.data.text.trim().toLowerCase();
-      onWordRecognized(recognizedText);
+      setRecognizedText(recognizedText);
+      console.log("recognizedText : ", recognizedText);
+
+      if (onWordRecognized) {
+        onWordRecognized(recognizedText);
+      }
+
+      if (targetWord && onComplete && recognizedText === targetWord.toLowerCase()) {
+        onComplete();
+      }
     } catch (error) {
       console.error('OCR Error:', error);
     } finally {

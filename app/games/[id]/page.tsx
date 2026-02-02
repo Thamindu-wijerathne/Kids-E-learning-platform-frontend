@@ -7,93 +7,40 @@ import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
-const gamesData: Record<number, any> = {
-  1: {
-    id: 1,
-    name: 'Letter Trace',
-    description: 'Learn to write letters beautifully with guided exercises',
-    emoji: '✏️',
-    color: 'bg-blue-400',
-    difficulty: 'Easy',
-    duration: '10 min',
-    instructions: 'Follow the dotted lines to trace letters. Be as smooth as possible!',
-  },
-  2: {
-    id: 2,
-    name: 'Shape Match',
-    description: 'Match shapes and patterns to complete puzzles',
-    emoji: '🟠',
-    color: 'bg-yellow-300',
-    difficulty: 'Medium',
-    duration: '15 min',
-    instructions: 'Drag and drop shapes to match the pattern shown at the top.',
-  },
-  3: {
-    id: 3,
-    name: 'Number Quest',
-    description: 'Count and solve exciting math puzzles',
-    emoji: '🔢',
-    color: 'bg-green-400',
-    difficulty: 'Medium',
-    duration: '12 min',
-    instructions: 'Count the objects and click the correct number.',
-  },
-  4: {
-    id: 4,
-    name: 'Color Explorer',
-    description: 'Learn colors by sorting and matching items',
-    emoji: '🎨',
-    color: 'bg-purple-400',
-    difficulty: 'Easy',
-    duration: '10 min',
-    instructions: 'Sort items by color and learn color names.',
-  },
-  5: {
-    id: 5,
-    name: 'Alphabet Adventure',
-    description: 'Journey through letters and word building',
-    emoji: '📚',
-    color: 'bg-red-400',
-    difficulty: 'Medium',
-    duration: '15 min',
-    instructions: 'Find the correct letters to spell words.',
-  },
-  6: {
-    id: 6,
-    name: 'Memory Master',
-    description: 'Test your memory with fun card matching games',
-    emoji: '🧠',
-    color: 'bg-indigo-400',
-    difficulty: 'Medium',
-    duration: '12 min',
-    instructions: 'Flip cards to find matching pairs.',
-  },
-  7: {
-    id: 7,
-    name: 'Puzzle Pal',
-    description: 'Solve logic puzzles and brain teasers',
-    emoji: '🧩',
-    color: 'bg-orange-400',
-    difficulty: 'Hard',
-    duration: '20 min',
-    instructions: 'Use logic to solve the puzzles step by step.',
-  },
-  8: {
-    id: 8,
-    name: 'Sound Safari',
-    description: 'Discover animals and learn their sounds',
-    emoji: '🦁',
-    color: 'bg-amber-400',
-    difficulty: 'Easy',
-    duration: '10 min',
-    instructions: 'Click animals to hear their sounds and learn about them.',
-  },
+import { gamesData } from '@/lib/games';
+
+// Import game components
+import LetterTrace from '@/components/games/LetterTrace';
+import ShapeMatch from '@/components/games/ShapeMatch';
+import NumberQuest from '@/components/games/NumberQuest';
+import ColorExplorer from '@/components/games/ColorExplorer';
+import AlphabetAdventure from '@/components/games/AlphabetAdventure';
+import MemoryMaster from '@/components/games/MemoryMaster';
+import PuzzlePal from '@/components/games/PuzzlePal';
+import SoundSafari from '@/components/games/SoundSafari';
+import MatchTheWord from '@/components/games/MatchTheWord';
+import { TetrisWord } from '@/components/games/tetris-word';
+import WordBuilder from '@/components/games/WordBuilder';
+
+const componentMap: Record<number, any> = {
+  1: LetterTrace,
+  2: ShapeMatch,
+  3: NumberQuest,
+  4: ColorExplorer,
+  5: AlphabetAdventure,
+  6: MemoryMaster,
+  7: PuzzlePal,
+  8: SoundSafari,
+  9: MatchTheWord,
+  10: TetrisWord,
+  11: WordBuilder,
 };
 
 export default function GamePage() {
   const params = useParams();
   const gameId = parseInt(params.id as string);
   const game = gamesData[gameId];
+  const GameComponent = componentMap[gameId];
 
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
@@ -155,7 +102,7 @@ export default function GamePage() {
 
       {/* Main Game Area */}
       <section className="px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-8xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Game Canvas */}
             <div className="lg:col-span-2">
@@ -175,27 +122,37 @@ export default function GamePage() {
                       </Button>
                     </div>
                   ) : (
-                    <div className="text-center w-full">
-                      <div className="text-7xl mb-8">{game.emoji}</div>
-                      <h2 className="text-4xl font-bold text-white mb-4">Level {level}</h2>
-                      <p className="text-white/90 text-xl mb-8">
-                        Play the game here! (Interactive game would render here)
-                      </p>
-                      <div className="flex gap-4 justify-center">
-                        <Button
-                          onClick={handleNextLevel}
-                          className="bg-green-500 hover:bg-green-600 text-white text-lg px-8 py-4 rounded-xl"
-                        >
-                          Complete Level ✓
-                        </Button>
-                        <Button
-                          onClick={handleRetry}
-                          variant="outline"
-                          className="border-2 border-white text-white hover:bg-white/20 text-lg px-8 py-4 rounded-xl bg-transparent"
-                        >
-                          Back
-                        </Button>
-                      </div>
+                    <div className="w-full h-full flex items-center justify-center min-h-[400px]">
+                      {GameComponent ? (
+                        <GameComponent
+                          onLevelUp={handleNextLevel}
+                          onScoreUpdate={setScore}
+                          gameData={game}
+                        />
+                      ) : (
+                        <div className="text-center w-full">
+                          <div className="text-7xl mb-8">{game.emoji}</div>
+                          <h2 className="text-4xl font-bold text-white mb-4">Level {level}</h2>
+                          <p className="text-white/90 text-xl mb-8">
+                            Play the game here! (Interactive game would render here)
+                          </p>
+                          <div className="flex gap-4 justify-center">
+                            <Button
+                              onClick={handleNextLevel}
+                              className="bg-green-500 hover:bg-green-600 text-white text-lg px-8 py-4 rounded-xl"
+                            >
+                              Complete Level ✓
+                            </Button>
+                            <Button
+                              onClick={handleRetry}
+                              variant="outline"
+                              className="border-2 border-white text-white hover:bg-white/20 text-lg px-8 py-4 rounded-xl bg-transparent"
+                            >
+                              Back
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
