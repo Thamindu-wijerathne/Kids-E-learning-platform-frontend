@@ -19,7 +19,7 @@ import MemoryMaster from '@/components/games/MemoryMaster';
 import PuzzlePal from '@/components/games/PuzzlePal';
 import SoundSafari from '@/components/games/SoundSafari';
 import MatchTheWord from '@/components/games/MatchTheWord';
-import { TetrisWord } from '@/components/games/tetris-word';
+import { TetrisWord } from '@/components/games/TetrisWord';
 import WordBuilder from '@/components/games/WordBuilder';
 
 const componentMap: Record<number, any> = {
