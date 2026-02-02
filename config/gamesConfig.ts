@@ -1,4 +1,4 @@
-import { TetrisWord } from '@/components/games/tetris-word';
+import { TetrisWord } from '@/components/games/TetrisWord';
 
 export interface Game {
   id: string;
@@ -14,7 +14,7 @@ export const GAMES: Game[] = [
   {
     id: 'worddrop',
     name: 'WordDrop',
-    description: 'Find words using falling letters. Type or handwrite to clear the grid!',
+    description: 'Find words using letters in the grid. Type or handwrite to clear the grid!',
     emoji: '📝',
     color: 'bg-emerald-400',
     category: 'handwriting',
