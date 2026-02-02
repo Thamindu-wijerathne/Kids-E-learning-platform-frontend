@@ -11,11 +11,12 @@ interface GameProps {
     onScoreUpdate: (points: number) => void;
     gameData: any;
     level: number;
+    currentScore: number;
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level }: GameProps) {
+export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level, currentScore }: GameProps) {
     const [currentPair, setCurrentPair] = useState(WORD_COLLECTION[0]);
     const [shuffledPool, setShuffledPool] = useState<{ id: string; letter: string }[]>([]);
     const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -94,11 +95,11 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level 
                 onResult={(isCorrect) => {
                     saveGameProgress({
                         game: "Word Builder",
-                        level,
+                        level: isCorrect ? level + 1 : level,
                         difficulty: currentDifficulty,
                         word: currentPair.word,
                         isCorrect,
-                        scoreDelta: isCorrect ? 10 : 0,
+                        scoreDelta: isCorrect ? currentScore + 10 : currentScore,
                         timestamp: Date.now(),
                     });
 

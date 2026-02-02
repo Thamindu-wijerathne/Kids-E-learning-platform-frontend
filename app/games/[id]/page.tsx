@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import Header from '@/components/header';
@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 
 import { gamesData } from '@/lib/games';
+
+import { useGameProgress } from '@/contexts/game-progress-context';
 
 // Import game components
 import LetterTrace from '@/components/games/LetterTrace';
@@ -46,6 +48,15 @@ export default function GamePage() {
   const [level, setLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  const gameProgress = useGameProgress();
+
+  useEffect(() => {
+    if (gameProgress.gameProgress) {
+      setLevel(gameProgress.gameProgress.level || 1);
+      setScore(gameProgress.gameProgress.scoreDelta || 0);
+    }
+  }, [gameProgress.gameProgress]);
 
   if (!game) {
     return (
@@ -129,6 +140,7 @@ export default function GamePage() {
                           onScoreUpdate={setScore}
                           gameData={game}
                           level={level}
+                          currentScore={score}
                         />
                       ) : (
                         <div className="text-center w-full">
