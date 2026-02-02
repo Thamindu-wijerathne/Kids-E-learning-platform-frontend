@@ -128,6 +128,7 @@ export default function GamePage() {
                           onLevelUp={handleNextLevel}
                           onScoreUpdate={setScore}
                           gameData={game}
+                          level={level}
                         />
                       ) : (
                         <div className="text-center w-full">

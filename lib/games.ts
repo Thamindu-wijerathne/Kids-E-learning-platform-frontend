@@ -130,7 +130,7 @@ export const gamesData: Record<number, GameMetadata> = {
         category: 'letters',
         difficulty: 'Medium',
         duration: '12 min',
-        instructions: 'Click the letters in the correct order to build the word. Some letters are just for distraction!',
+        instructions: 'Draw the word using the provided letter pool as a hint. Some letters are just for distraction!',
     }
 };
 

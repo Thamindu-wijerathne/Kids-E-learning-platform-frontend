@@ -35,3 +35,13 @@ export interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
 }
+
+export interface GameProgress {
+
+}
+
+export interface GameProgressContextType {
+  gameProgress: GameProgress | null;
+  saveGameProgress: (gameProgress: GameProgress) => void;
+  isLoading: boolean;
+}

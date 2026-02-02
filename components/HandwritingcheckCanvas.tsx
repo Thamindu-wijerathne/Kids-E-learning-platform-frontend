@@ -131,8 +131,8 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
                 style={{ border: '2px solid black', background: 'white' }}
             />
             <div style={{ display: 'flex', gap: 10, marginTop: 10 }}>
-                <button onClick={() => setTool('pen')}>✏️ Pen</button>
-                <button onClick={() => setTool('eraser')}>🧽 Eraser</button>
+                <button className='bg-white text-black p-2 rounded' onClick={() => setTool('pen')}>✏️ Pen</button>
+                <button className='bg-white text-black p-2 rounded' onClick={() => setTool('eraser')}>🧽 Eraser</button>
             </div>
 
             <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>

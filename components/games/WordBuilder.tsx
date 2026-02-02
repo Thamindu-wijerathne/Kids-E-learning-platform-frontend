@@ -1,39 +1,38 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import HandwritingcheckCanvas from '../HandwritingcheckCanvas';
+import { WORD_COLLECTION } from '@/lib/word-builder-data';
+import { useGameProgress } from '@/contexts/game-progress-context';
 
 interface GameProps {
     onLevelUp: () => void;
     onScoreUpdate: (points: number) => void;
     gameData: any;
+    level: number;
 }
-
-const WORDS = [
-    { word: 'GIRAFFE', emoji: '🦒' },
-    { word: 'ROCKET', emoji: '🚀' },
-    { word: 'PIZZA', emoji: '🍕' },
-    { word: 'DRAGON', emoji: '🐲' },
-    { word: 'GUITAR', emoji: '🎸' },
-    { word: 'BICYCLE', emoji: '🚲' },
-    { word: 'RAINBOW', emoji: '🌈' },
-    { word: 'PENGUIN', emoji: '🐧' },
-    { word: 'CHICKEN', emoji: '🐔' },
-    { word: 'BALLOON', emoji: '🎈' },
-];
-
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: GameProps) {
-    const [currentPair, setCurrentPair] = useState(WORDS[0]);
+export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level }: GameProps) {
+    const [currentPair, setCurrentPair] = useState(WORD_COLLECTION[0]);
     const [shuffledPool, setShuffledPool] = useState<{ id: string; letter: string }[]>([]);
-    const [selectedLetters, setSelectedLetters] = useState<{ id: string; letter: string }[]>([]);
     const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
+    const { saveGameProgress } = useGameProgress();
+
+    // Determine difficulty based on level
+    const currentDifficulty = useMemo(() => {
+        if (level <= 10) return 'easy';
+        if (level <= 30) return 'medium';
+        return 'hard';
+    }, [level]);
+
     const initGame = useCallback(() => {
-        const randomPair = WORDS[Math.floor(Math.random() * WORDS.length)];
+        // Filter words by difficulty
+        const availableWords = WORD_COLLECTION.filter(w => w.difficulty === currentDifficulty);
+        const randomPair = availableWords[Math.floor(Math.random() * availableWords.length)];
         setCurrentPair(randomPair);
 
         // Create pool of letters from the word
@@ -42,8 +41,9 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: Game
             letter
         }));
 
-        // Add 3 random distractor letters
-        const distractors = Array.from({ length: 3 }).map((_, i) => ({
+        // Add distractors based on level
+        const distractorCount = Math.min(3 + Math.floor(level / 2), 8);
+        const distractors = Array.from({ length: distractorCount }).map((_, i) => ({
             id: `distractor-${i}-${Math.random()}`,
             letter: ALPHABET[Math.floor(Math.random() * ALPHABET.length)]
         }));
@@ -51,19 +51,27 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: Game
         const pool = [...correctLetters, ...distractors].sort(() => 0.5 - Math.random());
 
         setShuffledPool(pool);
-        setSelectedLetters([]);
         setFeedback(null);
-    }, []);
+    }, [currentDifficulty, level]);
 
     useEffect(() => {
         initGame();
-    }, [initGame]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [level]);
 
     return (
         <div className="w-full flex flex-col items-center max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
             <div className="text-center">
                 <h2 className="text-3xl font-bold text-white mb-2">Build the Word!</h2>
-                <p className="text-white/80">Distractor letters are mixed in – be careful!</p>
+                <div className="flex gap-4 justify-center items-center">
+                    <p className="text-white/80">Goal: Draw the word using the pool below!</p>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${currentDifficulty === 'easy' ? 'bg-green-400 text-green-900' :
+                        currentDifficulty === 'medium' ? 'bg-yellow-400 text-yellow-900' :
+                            'bg-red-400 text-red-900'
+                        }`}>
+                        {currentDifficulty} Mode • Level {level}
+                    </span>
+                </div>
             </div>
 
             <div className="relative">
@@ -84,15 +92,22 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: Game
             <HandwritingcheckCanvas
                 expectedWord={currentPair.word}
                 onResult={(isCorrect) => {
-                    setFeedback(isCorrect ? 'correct' : 'wrong');
+                    saveGameProgress({
+                        game: "word_builder",
+                        level,
+                        difficulty: currentDifficulty,
+                        word: currentPair.word,
+                        isCorrect,
+                        scoreDelta: isCorrect ? 10 : 0,
+                        timestamp: Date.now(),
+                    });
 
                     if (isCorrect) {
                         onScoreUpdate(10);
-                        setTimeout(initGame, 800);
+                        onLevelUp();
                     }
                 }}
             />
-
 
             <div className="h-10 flex items-center justify-center">
                 {feedback && (
@@ -105,3 +120,4 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: Game
         </div>
     );
 }
+
