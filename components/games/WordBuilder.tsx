@@ -5,6 +5,8 @@ import { Card } from '@/components/ui/card';
 import HandwritingcheckCanvas from '../HandwritingcheckCanvas';
 import { WORD_COLLECTION } from '@/lib/word-builder-data';
 import { useGameProgress } from '@/contexts/game-progress-context';
+import { Butcherman } from 'next/font/google';
+import { Button } from '../ui/button';
 
 interface GameProps {
     onLevelUp: () => void;
@@ -55,6 +57,21 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
         setFeedback(null);
     }, [currentDifficulty, level]);
 
+    const skipThisWord = () => {
+        if (currentScore >= 50) {
+            saveGameProgress({
+                game: "Word Builder",
+                level: level,
+                difficulty: currentDifficulty,
+                word: currentPair.word,
+                isCorrect: false,
+                scoreDelta: currentScore - 50,
+                timestamp: Date.now(),
+            });
+            initGame();
+        }
+    }
+
     useEffect(() => {
         initGame();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -89,6 +106,10 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                     </div>
                 ))}
             </div>
+
+            <Button onClick={skipThisWord}>
+                Skip (cost 50 points)
+            </Button>
 
             <HandwritingcheckCanvas
                 expectedWord={currentPair.word}
