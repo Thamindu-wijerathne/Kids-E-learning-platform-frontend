@@ -18,6 +18,7 @@ export const GameProgressProvider = ({ children }: { children: ReactNode }) => {
 
     const [gameProgress, setGameProgress] = useState<GameProgress | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [startTime, setStartTime] = useState<number | null>(null);
 
     const { token } = useAuth();
     const isSavingRef = useRef(false); // prevent double save
@@ -27,6 +28,7 @@ export const GameProgressProvider = ({ children }: { children: ReactNode }) => {
         if (!currentGameName) return;
         try {
             const progress = await getGameProgressApi(currentGameName);
+            setStartTime(Date.now());
             console.log("Game progress loaded:", progress);
             setGameProgress(progress);
         } catch (err) {
@@ -45,12 +47,24 @@ export const GameProgressProvider = ({ children }: { children: ReactNode }) => {
     }, [loadGameProgress]);
 
     const saveGameProgress = async (progress: GameProgress) => {
+        if (!startTime) return;
+
+        const now = Date.now();
+        const duration = Math.floor((now - startTime) / 1000);
+
         // 1️⃣ update UI immediately
+        // We set the timeSpent for this specific segment
+        progress.timeSpent = duration;
+
+        console.log("Game progress saved:", progress);
         setGameProgress(progress);
         localStorage.setItem("playlearn_game_progress", JSON.stringify(progress));
 
         // 2️⃣ avoid duplicate calls
         if (isSavingRef.current) return;
+
+        // Only reset the anchor after we've committed to a sync
+        setStartTime(now);
         isSavingRef.current = true;
 
         try {

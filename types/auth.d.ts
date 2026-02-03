@@ -43,6 +43,7 @@ export interface GameProgress {
   word?: string;
   isCorrect?: boolean;
   scoreDelta?: number;
+  timeSpent?: number;
   timestamp: number;
   [key: string]: any;
 }
