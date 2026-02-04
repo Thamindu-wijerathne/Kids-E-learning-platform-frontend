@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 import Header from '@/components/header';
-import GameCard from '@/components/game-card';
+import GameCard from '@/components/GameCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
-import { gamesList } from '@/lib/games';
+import { gamesList } from '@/config/gamesConfig';
 
 export default function GamesPage() {
   const [searchTerm, setSearchTerm] = useState('');

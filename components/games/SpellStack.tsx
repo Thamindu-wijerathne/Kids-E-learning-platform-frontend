@@ -15,7 +15,7 @@ const GRID_ROWS = 10;
 const GRID_COLS = 8;
 const LETTER_FREQUENCY = 'EEEEEEEEEEETTTTTTTTTAAAAAAAOOOOOOIIIIIIINNNNNNSSSSSSHHHHHHRRRRRDDDLLLUUUCCCMMMWWWFFFGGGYYYPPBBVVKJXQZ';
 
-export function TetrisWord() {
+export function SpellStack() {
   const [grid, setGrid] = useState<LetterBlock[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -145,7 +145,7 @@ export function TetrisWord() {
         
         <div className="flex flex-row items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800">WordDrop</h1>
+            <h1 className="text-2xl font-black tracking-tight text-slate-800">SpellStack</h1>
             <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Score: {score}</p>
           </div>
           

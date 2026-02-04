@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import GameCard from '@/components/GameCard';
-import { GAMES } from '@/config/gamesConfig';
+import { gamesList } from '@/config/gamesConfig';
 
 export default function GamesPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -17,7 +17,7 @@ export default function GamesPage() {
     { id: 'memory', label: 'Memory', emoji: '🧠' },
   ];
 
-  const filteredGames = GAMES.filter((game) => {
+  const filteredGames = gamesList.filter((game) => {
     const matchesSearch = game.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       game.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || game.category === selectedCategory;

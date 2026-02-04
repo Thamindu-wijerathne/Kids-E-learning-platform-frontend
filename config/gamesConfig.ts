@@ -1,4 +1,5 @@
-import { TetrisWord } from '@/components/games/TetrisWord';
+import { SpellStack  } from '@/components/games/SpellStack';
+import WordBuilder from '@/components/games/WordBuilder';  
 
 export interface Game {
   id: string;
@@ -7,17 +8,27 @@ export interface Game {
   emoji: string;
   color: string;
   category: 'handwriting' | 'patterns' | 'letters' | 'memory';
-  component: React.ComponentType;
+  component: React.ComponentType<any>;
 }
 
-export const GAMES: Game[] = [
+export const gamesList: Game[] = [
   {
-    id: 'worddrop',
-    name: 'WordDrop',
-    description: 'Find words using letters in the grid. Type or handwrite to clear the grid!',
+    id: 'spellstack',
+    name: 'SpellStack',
+    description: 'Test your vocabulary and speed as letters stack up in a grid. Create words to survive as the pressure builds.',
     emoji: '📝',
     color: 'bg-emerald-400',
     category: 'handwriting',
-    component: TetrisWord,
+    component: SpellStack,
+  },
+
+  {
+    id: 'wordbuilder',
+    name: 'Word Builder',
+    description: 'Build the word by arranging letters. Watch out for distractors!',
+    emoji: '🏗️',
+    color: 'bg-orange-400',
+    category: 'handwriting',
+    component: WordBuilder,
   },
 ];

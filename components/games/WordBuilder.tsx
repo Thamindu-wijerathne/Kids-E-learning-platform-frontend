@@ -5,9 +5,9 @@ import { Card } from '@/components/ui/card';
 import HandwritingcheckCanvas from '../HandwritingcheckCanvas';
 
 interface GameProps {
-    onLevelUp: () => void;
-    onScoreUpdate: (points: number) => void;
-    gameData: any;
+    onLevelUp?: () => void;
+    onScoreUpdate?: (points: number) => void;
+    gameData?: any;
 }
 
 const WORDS = [
@@ -75,7 +75,10 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: Game
             {/* Pool Area */}
             <div className="flex flex-wrap gap-2 md:gap-3 justify-center bg-black/10 p-6 md:p-8 rounded-[2rem] backdrop-blur-sm border-2 border-white/5 w-full">
                 {shuffledPool.map((letterObj) => (
-                    <div className="w-12 h-12 md:w-16 md:h-16 bg-white hover:bg-orange-400 hover:text-white text-primary text-xl md:text-2xl font-black rounded-xl shadow-lg transition-all transform active:scale-90 hover:scale-110 flex items-center justify-center">
+                    <div 
+                        key={letterObj.id}
+                        className="w-12 h-12 md:w-16 md:h-16 bg-white hover:bg-orange-400 hover:text-white text-primary text-xl md:text-2xl font-black rounded-xl shadow-lg transition-all transform active:scale-90 hover:scale-110 flex items-center justify-center"
+                    >
                         {letterObj.letter}
                     </div>
                 ))}
@@ -87,7 +90,9 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData }: Game
                     setFeedback(isCorrect ? 'correct' : 'wrong');
 
                     if (isCorrect) {
-                        onScoreUpdate(10);
+                        if (onScoreUpdate) {
+                            onScoreUpdate(10);
+                        }
                         setTimeout(initGame, 800);
                     }
                 }}

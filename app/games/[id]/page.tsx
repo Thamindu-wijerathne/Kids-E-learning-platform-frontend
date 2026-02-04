@@ -1,47 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { useState } from 'react';
 import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-
-import { gamesData } from '@/lib/games';
-
-// Import game components
-import LetterTrace from '@/components/games/LetterTrace';
-import ShapeMatch from '@/components/games/ShapeMatch';
-import NumberQuest from '@/components/games/NumberQuest';
-import ColorExplorer from '@/components/games/ColorExplorer';
-import AlphabetAdventure from '@/components/games/AlphabetAdventure';
-import MemoryMaster from '@/components/games/MemoryMaster';
-import PuzzlePal from '@/components/games/PuzzlePal';
-import SoundSafari from '@/components/games/SoundSafari';
-import MatchTheWord from '@/components/games/MatchTheWord';
-import { TetrisWord } from '@/components/games/TetrisWord';
-import WordBuilder from '@/components/games/WordBuilder';
-
-const componentMap: Record<number, any> = {
-  1: LetterTrace,
-  2: ShapeMatch,
-  3: NumberQuest,
-  4: ColorExplorer,
-  5: AlphabetAdventure,
-  6: MemoryMaster,
-  7: PuzzlePal,
-  8: SoundSafari,
-  9: MatchTheWord,
-  10: TetrisWord,
-  11: WordBuilder,
-};
+import { gamesList } from '@/config/gamesConfig';
 
 export default function GamePage() {
   const params = useParams();
-  const gameId = parseInt(params.id as string);
-  const game = gamesData[gameId];
-  const GameComponent = componentMap[gameId];
+  const id = params.id as string;
 
+  // CHANGED: Find game by string id instead of number
+  const game = gamesList.find((g) => g.id === id);
+  
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -65,6 +39,9 @@ export default function GamePage() {
       </main>
     );
   }
+
+  // CHANGED: Get component directly from game object
+  const GameComponent = game.component;
 
   const handlePlayGame = () => {
     setIsPlaying(true);
@@ -112,7 +89,7 @@ export default function GamePage() {
                     <div className="text-center">
                       <div className="text-9xl mb-6 animate-bounce">{game.emoji}</div>
                       <h1 className="text-4xl font-bold text-white mb-4">{game.name}</h1>
-                      <p className="text-white/90 text-lg mb-8 max-w-md">{game.instructions}</p>
+                      <p className="text-white/90 text-lg mb-8 max-w-md">{game.description}</p>
                       <Button
                         size="lg"
                         onClick={handlePlayGame}
@@ -123,36 +100,12 @@ export default function GamePage() {
                     </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center min-h-[400px]">
-                      {GameComponent ? (
-                        <GameComponent
-                          onLevelUp={handleNextLevel}
-                          onScoreUpdate={setScore}
-                          gameData={game}
-                        />
-                      ) : (
-                        <div className="text-center w-full">
-                          <div className="text-7xl mb-8">{game.emoji}</div>
-                          <h2 className="text-4xl font-bold text-white mb-4">Level {level}</h2>
-                          <p className="text-white/90 text-xl mb-8">
-                            Play the game here! (Interactive game would render here)
-                          </p>
-                          <div className="flex gap-4 justify-center">
-                            <Button
-                              onClick={handleNextLevel}
-                              className="bg-green-500 hover:bg-green-600 text-white text-lg px-8 py-4 rounded-xl"
-                            >
-                              Complete Level ✓
-                            </Button>
-                            <Button
-                              onClick={handleRetry}
-                              variant="outline"
-                              className="border-2 border-white text-white hover:bg-white/20 text-lg px-8 py-4 rounded-xl bg-transparent"
-                            >
-                              Back
-                            </Button>
-                          </div>
-                        </div>
-                      )}
+                      {/* CHANGED: Render component directly without props */}
+                      <GameComponent 
+                        onLevelUp={handleNextLevel}
+                        onScoreUpdate={setScore}
+                        gameData={game}
+                      />
                     </div>
                   )}
                 </div>
@@ -187,12 +140,12 @@ export default function GamePage() {
                 <h3 className="text-lg font-bold text-foreground mb-4">ℹ️ Game Info</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-foreground/70">Difficulty</span>
-                    <span className="font-bold text-primary">{game.difficulty}</span>
+                    <span className="text-foreground/70">Category</span>
+                    <span className="font-bold text-primary capitalize">{game.category}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-foreground/70">Duration</span>
-                    <span className="font-bold text-primary">{game.duration}</span>
+                    <span className="text-foreground/70">Type</span>
+                    <span className="font-bold text-primary">Educational</span>
                   </div>
                 </div>
               </Card>
