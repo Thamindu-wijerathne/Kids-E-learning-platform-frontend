@@ -114,6 +114,9 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
             <HandwritingcheckCanvas
                 expectedWord={currentPair.word}
                 onResult={(isCorrect) => {
+
+                    console.log("word builder runned wordbuilder.tsx before saveGameProgress")
+
                     saveGameProgress({
                         game: "Word Builder",
                         level: isCorrect ? level + 1 : level,
@@ -128,6 +131,8 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                         onScoreUpdate(10);
                         onLevelUp();
                     }
+
+                    console.log("word builder runned wordbuilder.tsx")
                 }}
             />
 
