@@ -5,14 +5,14 @@ import { getGameProgressApi, saveGameProgressApi, saveWordBuilderProgressApi, sa
 import { useAuth } from "./auth-context";
 import { GameProgress, GameProgressContextType } from "../types/auth";
 import { useParams } from "next/navigation";
-import { gamesData } from "@/lib/games";
+import { gamesList } from "@/config/gamesConfig";
 
 const GameProgressContext = createContext<GameProgressContextType | undefined>(undefined);
 
 export const GameProgressProvider = ({ children }: { children: ReactNode }) => {
     const params = useParams();
-    const currentGameId = params?.id ? parseInt(params.id as string) : null;
-    const currentGameName = currentGameId ? gamesData[currentGameId]?.name : null;
+    const currentGameId = params?.id ? (params.id as string) : null;
+    const currentGameName = currentGameId ? (gamesList.find(g => g.id === currentGameId)?.name || null) : null;
 
     const [gameProgress, setGameProgress] = useState<GameProgress | null>(null);
     const [isLoading, setIsLoading] = useState(true);

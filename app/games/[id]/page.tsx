@@ -8,6 +8,9 @@ import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { gamesList } from '@/config/gamesConfig';
+import { useGameProgress } from '@/contexts/game-progress-context';
+import { useEffect } from 'react';
+
 
 export default function GamePage() {
   const params = useParams();
@@ -15,7 +18,7 @@ export default function GamePage() {
 
   // CHANGED: Find game by string id instead of number
   const game = gamesList.find((g) => g.id === id);
-  
+
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -110,10 +113,12 @@ export default function GamePage() {
                   ) : (
                     <div className="w-full h-full flex items-center justify-center min-h-[400px]">
                       {/* CHANGED: Render component directly without props */}
-                      <GameComponent 
+                      <GameComponent
                         onLevelUp={handleNextLevel}
                         onScoreUpdate={setScore}
                         gameData={game}
+                        level={level}
+                        currentScore={score}
                       />
                     </div>
                   )}

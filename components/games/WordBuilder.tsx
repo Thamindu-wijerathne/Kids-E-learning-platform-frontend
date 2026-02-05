@@ -12,6 +12,8 @@ interface GameProps {
     onLevelUp?: () => void;
     onScoreUpdate?: (points: number) => void;
     gameData?: any;
+    level: number;
+    currentScore: number;
 }
 
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -76,76 +78,104 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
     }, [level]);
 
     return (
-        <div className="w-full flex flex-col items-center max-w-4xl mx-auto space-y-8 animate-in fade-in duration-500">
-            <div className="text-center">
-                <h2 className="text-3xl font-bold text-white mb-2">Build the Word!</h2>
-                <div className="flex gap-4 justify-center items-center">
-                    <p className="text-white/80">Goal: Draw the word using the pool below!</p>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${currentDifficulty === 'easy' ? 'bg-green-400 text-green-900' :
-                        currentDifficulty === 'medium' ? 'bg-yellow-400 text-yellow-900' :
-                            'bg-red-400 text-red-900'
-                        }`}>
-                        {currentDifficulty} Mode • Level {level}
-                    </span>
+        <div className="w-full flex flex-col items-center max-w-4xl mx-auto space-y-10 py-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            {/* Game Header Section */}
+            <div className="text-center space-y-3">
+                <h2 className="text-4xl md:text-5xl font-black text-white tracking-tight drop-shadow-md">
+                    Build the Word!
+                </h2>
+                <div className="flex flex-col md:flex-row gap-3 justify-center items-center">
+                    <p className="text-white/90 font-medium text-lg bg-white/10 px-4 py-1 rounded-full backdrop-blur-md border border-white/10">
+                        Goal: Recognize the emoji and draw the letters!
+                    </p>
+                    <div className="flex items-center gap-2">
+                        <span className={`px-4 py-1.5 rounded-2xl text-sm font-black uppercase tracking-widest shadow-lg ${currentDifficulty === 'easy' ? 'bg-emerald-400 text-emerald-950 shadow-emerald-500/20' :
+                                currentDifficulty === 'medium' ? 'bg-amber-400 text-amber-950 shadow-amber-500/20' :
+                                    'bg-rose-500 text-white shadow-rose-900/20'
+                            }`}>
+                            {currentDifficulty}
+                        </span>
+                        <div className="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-2xl border border-white/20 text-white font-bold text-sm">
+                            Level {level}
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="relative">
-                <Card className="w-40 h-40 md:w-52 md:h-52 flex items-center justify-center bg-white/20 backdrop-blur-xl border-4 border-white/30 rounded-[2.5rem] shadow-2xl">
-                    <span className="text-6xl md:text-8xl drop-shadow-lg">{currentPair.emoji}</span>
+            {/* Main Emoji Display */}
+            <div className="relative group">
+                <div className="absolute -inset-4 bg-gradient-to-tr from-white/20 to-transparent rounded-[3rem] blur-2xl opacity-50 group-hover:opacity-80 transition-opacity" />
+                <Card className="relative w-44 h-44 md:w-56 md:h-56 flex items-center justify-center bg-white/20 backdrop-blur-2xl border-2 border-white/30 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.1)] ring-1 ring-white/20 transition-transform duration-500 hover:scale-105">
+                    <span className="text-7xl md:text-9xl drop-shadow-2xl filter brightness-110">{currentPair.emoji}</span>
                 </Card>
             </div>
 
-            {/* Pool Area */}
-            <div className="flex flex-wrap gap-2 md:gap-3 justify-center bg-black/10 p-6 md:p-8 rounded-[2rem] backdrop-blur-sm border-2 border-white/5 w-full">
-                {shuffledPool.map((letterObj) => (
-                    <div 
-                        key={letterObj.id}
-                        className="w-12 h-12 md:w-16 md:h-16 bg-white hover:bg-orange-400 hover:text-white text-primary text-xl md:text-2xl font-black rounded-xl shadow-lg transition-all transform active:scale-90 hover:scale-110 flex items-center justify-center"
-                    >
-                        {letterObj.letter}
-                    </div>
-                ))}
+            {/* Letter Pool Area */}
+            <div className="w-full space-y-4">
+                <div className="flex justify-between items-center px-6">
+                    <h3 className="text-white/60 font-bold text-sm uppercase tracking-widest">Letter Pool</h3>
+                    {currentScore >= 50 && (
+                        <Button
+                            variant="ghost"
+                            onClick={skipThisWord}
+                            className="text-white/70 hover:text-white hover:bg-white/10 rounded-xl px-4 py-1 h-auto text-xs font-bold border border-white/10 transition-all"
+                        >
+                            Skip? (50 pts)
+                        </Button>
+                    )}
+                </div>
+                <div className="flex flex-wrap gap-3 md:gap-4 justify-center bg-white/5 p-8 rounded-[2.5rem] backdrop-blur-md border-2 border-white/10 shadow-inner w-full">
+                    {shuffledPool.map((letterObj) => (
+                        <div
+                            key={letterObj.id}
+                            className="w-14 h-14 md:w-20 md:h-20 bg-white hover:bg-gradient-to-br hover:from-white hover:to-orange-50 text-slate-800 text-2xl md:text-4xl font-black rounded-2xl shadow-[0_8px_0_rgba(0,0,0,0.05)] border-b-4 border-slate-200 transition-all transform hover:-translate-y-1 active:translate-y-0.5 active:border-b-0 hover:shadow-xl flex items-center justify-center cursor-default group"
+                        >
+                            <span className="group-hover:scale-110 transition-transform">{letterObj.letter}</span>
+                        </div>
+                    ))}
+                </div>
             </div>
 
-            <Button onClick={skipThisWord}>
-                Skip (cost 50 points)
-            </Button>
+            {/* Canvas Section */}
+            <div className="w-full space-y-4">
+                <div className="flex justify-center">
+                    <div className="bg-white/10 backdrop-blur-md p-2 rounded-3xl border border-white/20 shadow-2xl w-full max-w-2xl">
+                        <HandwritingcheckCanvas
+                            expectedWord={currentPair.word}
+                            onResult={(isCorrect) => {
+                                saveGameProgress({
+                                    game: "Word Builder",
+                                    level: isCorrect ? level + 1 : level,
+                                    difficulty: currentDifficulty,
+                                    word: currentPair.word,
+                                    isCorrect,
+                                    scoreDelta: isCorrect ? currentScore + 10 : currentScore,
+                                    timestamp: Date.now(),
+                                });
 
-            <HandwritingcheckCanvas
-                expectedWord={currentPair.word}
-                onResult={(isCorrect) => {
-
-                    console.log("word builder runned wordbuilder.tsx before saveGameProgress")
-
-                    saveGameProgress({
-                        game: "Word Builder",
-                        level: isCorrect ? level + 1 : level,
-                        difficulty: currentDifficulty,
-                        word: currentPair.word,
-                        isCorrect,
-                        scoreDelta: isCorrect ? currentScore + 10 : currentScore,
-                        timestamp: Date.now(),
-                    });
-
-                    if (isCorrect) {
-                        if (onScoreUpdate) {
-                            onScoreUpdate(10);
-                        }
-                        setTimeout(initGame, 800);
-                    }
-
-                    console.log("word builder runned wordbuilder.tsx")
-                }}
-            />
-
-            <div className="h-10 flex items-center justify-center">
-                {feedback && (
-                    <div className={`text-3xl font-bold italic animate-in zoom-in duration-300
-                        ${feedback === 'correct' ? 'text-green-400' : 'text-red-400'}`}>
-                        {feedback === 'correct' ? 'EXCELLENT! 🏗️' : 'TRY AGAIN! 🏗️'}
+                                if (isCorrect) {
+                                    setFeedback('correct');
+                                    if (onScoreUpdate) onScoreUpdate(10);
+                                    if (onLevelUp) onLevelUp();
+                                    setTimeout(initGame, 1200);
+                                } else {
+                                    setFeedback('wrong');
+                                    setTimeout(() => setFeedback(null), 1500);
+                                }
+                            }}
+                        />
                     </div>
-                )}
+                </div>
+
+                {/* Feedback Messages */}
+                <div className="h-16 flex items-center justify-center">
+                    {feedback && (
+                        <div className={`text-3xl md:text-5xl font-black px-8 py-3 rounded-2xl backdrop-blur-xl border-2 shadow-2xl animate-in zoom-in slide-in-from-top-4 duration-300
+                            ${feedback === 'correct' ? 'bg-emerald-400/20 border-emerald-400 text-emerald-300' : 'bg-rose-500/20 border-rose-500 text-rose-300'}`}>
+                            {feedback === 'correct' ? 'AMAZING! 🏗️' : 'TRY AGAIN! 🏗️'}
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );

@@ -53,6 +53,6 @@ export interface GameProgressContextType {
   saveGameProgress: (gameProgress: GameProgress) => void;
   loadGameProgress: () => void;
   isLoading: boolean;
-  currentGameId: number | null;
+  currentGameId: string | null;
   currentGameName: string | null;
 }
