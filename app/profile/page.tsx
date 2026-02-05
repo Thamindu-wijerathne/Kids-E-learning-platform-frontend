@@ -8,14 +8,18 @@ import Header from '@/components/header';
 import { useEffect } from 'react';
 
 export default function Profile() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/signin');
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
+  }
 
   if (!user) {
     return null;

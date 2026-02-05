@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
-
+import bitzifylogo from '@/public/bitzify-logo.svg';
+import Image from 'next/image';
 export default function Header() {
   const { isAuthenticated, logout, user } = useAuth();
 
@@ -14,7 +15,7 @@ export default function Header() {
         <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <div className="text-3xl font-bold">🎮</div>
+            <Image src={bitzifylogo} alt="Bitzify Logo" width={32} height={32} />
             <span className="text-2xl font-bold hidden sm:inline">PlayLearn</span>
           </Link>
 

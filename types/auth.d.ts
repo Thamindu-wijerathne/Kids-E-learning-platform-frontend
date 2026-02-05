@@ -35,3 +35,24 @@ export interface AuthContextType {
   logout: () => void;
   isLoading: boolean;
 }
+
+export interface GameProgress {
+  game: string;
+  level: number;
+  difficulty: string;
+  word?: string;
+  isCorrect?: boolean;
+  scoreDelta?: number;
+  timeSpent?: number;
+  timestamp: number;
+  [key: string]: any;
+}
+
+export interface GameProgressContextType {
+  gameProgress: GameProgress | null;
+  saveGameProgress: (gameProgress: GameProgress) => void;
+  loadGameProgress: () => void;
+  isLoading: boolean;
+  currentGameId: number | null;
+  currentGameName: string | null;
+}

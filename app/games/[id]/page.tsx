@@ -21,6 +21,15 @@ export default function GamePage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
+  const gameProgress = useGameProgress();
+
+  useEffect(() => {
+    if (gameProgress.gameProgress) {
+      setLevel(gameProgress.gameProgress.level || 1);
+      setScore(gameProgress.gameProgress.scoreDelta || 0);
+    }
+  }, [gameProgress.gameProgress]);
+
   if (!game) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
