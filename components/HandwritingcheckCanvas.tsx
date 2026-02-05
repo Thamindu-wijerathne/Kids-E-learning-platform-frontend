@@ -22,24 +22,55 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
     const [loading, setLoading] = useState(false);
     const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
 
-    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const getCoordinates = (e: React.MouseEvent | React.TouchEvent | MouseEvent | TouchEvent) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return { x: 0, y: 0 };
+
+        const rect = canvas.getBoundingClientRect();
+        let clientX, clientY;
+
+        if ('touches' in e) {
+            clientX = (e as React.TouchEvent).touches[0].clientX;
+            clientY = (e as React.TouchEvent).touches[0].clientY;
+        } else {
+            clientX = (e as React.MouseEvent).clientX;
+            clientY = (e as React.MouseEvent).clientY;
+        }
+
+        return {
+            x: (clientX - rect.left) * (canvas.width / rect.width),
+            y: (clientY - rect.top) * (canvas.height / rect.height)
+        };
+    };
+
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         const ctx = canvasRef.current?.getContext('2d');
         if (!ctx) return;
 
+        const { x, y } = getCoordinates(e);
+
         setIsDrawing(true);
         ctx.beginPath();
-        ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        ctx.moveTo(x, y);
+
+        // Prevent scrolling on touch
+        if ('touches' in e) {
+            e.preventDefault();
+        }
     };
 
 
-    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
         if (!isDrawing) return;
 
         const ctx = canvasRef.current?.getContext('2d');
         if (!ctx) return;
 
-        ctx.lineWidth = tool === 'eraser' ? 20 : 3;
+        const { x, y } = getCoordinates(e);
+
+        ctx.lineWidth = tool === 'eraser' ? 20 : 6;
         ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
         if (tool === 'eraser') {
             ctx.globalCompositeOperation = 'destination-out';
@@ -48,8 +79,13 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
             ctx.strokeStyle = 'black';
         }
 
-        ctx.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        ctx.lineTo(x, y);
         ctx.stroke();
+
+        // Prevent scrolling on touch
+        if ('touches' in e) {
+            e.preventDefault();
+        }
     };
 
 
@@ -72,6 +108,8 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
 
         setLoading(true);
 
+        console.log("Sending to OCR");
+
         canvas.toBlob(async (blob) => {
             if (!blob) return;
 
@@ -82,6 +120,12 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
 
             const formData = new FormData();
             formData.append('file', file);
+
+            console.log("Sending to OCR : ", {
+                fileName: file.name,
+                fileSize: file.size,
+                type: file.type
+            });
 
             try {
                 const res = await fetch('http://localhost:8000/ocr/handwriting-ocr', {
@@ -98,8 +142,8 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
 
                 setResult(detected);
 
-                // onResult(detected === expected);
-                onResult(true);
+                onResult(detected === expected);
+                // onResult(true);
             } catch (err) {
                 console.error(err);
             } finally {
@@ -155,6 +199,9 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
                     onMouseMove={draw}
                     onMouseUp={stopDrawing}
                     onMouseLeave={stopDrawing}
+                    onTouchStart={startDrawing}
+                    onTouchMove={draw}
+                    onTouchEnd={stopDrawing}
                     className="relative w-full h-[180px] md:h-[220px] bg-white rounded-[2rem] border-4 border-slate-900/10 shadow-inner cursor-crosshair touch-none"
                 />
             </div>
