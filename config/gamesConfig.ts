@@ -1,6 +1,19 @@
 import { SpellStack  } from '@/components/games/SpellStack';
 import WordBuilder from '@/components/games/WordBuilder';  
 
+export type ScoringType = 'session' | 'persistent' | 'highest';
+
+export interface GameConfig {
+  scoring?: {
+    type: ScoringType;
+    enabled: boolean;
+  };
+  leveling?: {
+    enabled: boolean;
+    maxLevel?: number;
+  };
+}
+
 export interface Game {
   id: string;
   name: string;
@@ -9,6 +22,7 @@ export interface Game {
   color: string;
   category: 'handwriting' | 'patterns' | 'letters' | 'memory';
   component: React.ComponentType<any>;
+  config: GameConfig;
 }
 
 export const gamesList: Game[] = [
@@ -20,6 +34,10 @@ export const gamesList: Game[] = [
     color: 'bg-emerald-400',
     category: 'handwriting',
     component: SpellStack,
+    config: {
+      scoring: { type: 'session', enabled: true },
+      leveling: { enabled: false }
+    }
   },
 
   {
@@ -30,5 +48,9 @@ export const gamesList: Game[] = [
     color: 'bg-orange-400',
     category: 'handwriting',
     component: WordBuilder,
+    config: {
+      scoring: { type: 'persistent', enabled: true },
+      leveling: { enabled: true, maxLevel: 10 }
+    }
   },
 ];
