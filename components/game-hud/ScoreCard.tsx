@@ -2,6 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
+import { saveScoreApi, getScoreApi } from '@/services/game-progress-service';
 
 interface ScoreCardProps {
   gameId: string;
@@ -12,35 +13,67 @@ interface ScoreCardProps {
 export function ScoreCard({ gameId, currentScore, scoringType }: ScoreCardProps) {
   const [displayScore, setDisplayScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [totalScore, setTotalScore] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch score from fake placeholder API. This needs to change
-    fetch(`/api/scores/${gameId}`)
-      .then(res => res.json())
-      .then(data => {
+    const fetchScores = async () => {
+      try {
+        const data = await getScoreApi(gameId);
+        setHighScore(data.highScore || 0);
+        setTotalScore(data.totalScore || 0);
+        
         if (scoringType === 'persistent') {
           setDisplayScore(data.totalScore + currentScore);
-        } else if (scoringType === 'highest') {
-          setHighScore(data.highScore);
-          setDisplayScore(currentScore);
         } else {
           setDisplayScore(currentScore);
         }
-      })
-      .catch(() => setDisplayScore(currentScore));
-  }, [gameId, currentScore, scoringType]);
+      } catch (error) {
+        console.error('Failed to fetch scores:', error);
+        setDisplayScore(currentScore);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchScores();
+  }, [gameId, scoringType]);
+
+  // Update display score when current score changes
+  useEffect(() => {
+    if (scoringType === 'persistent') {
+      setDisplayScore(totalScore + currentScore);
+    } else {
+      setDisplayScore(currentScore);
+    }
+  }, [currentScore, totalScore, scoringType]);
+
 
   // Save score periodically
   useEffect(() => {
-    const interval = setInterval(() => {
-      fetch(`/api/scores/${gameId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ score: currentScore, type: scoringType })
-      });
+    if (currentScore === 0) return;
+
+    const interval = setInterval(async () => {
+      try {
+        await saveScoreApi(gameId, currentScore, scoringType);
+      } catch (error) {
+        console.error('Failed to save score:', error);
+      }
     }, 5000);
+
     return () => clearInterval(interval);
   }, [gameId, currentScore, scoringType]);
+
+  if (isLoading) {
+    return (
+      <Card className="p-6 bg-white shadow-lg">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-24 mb-4"></div>
+          <div className="h-10 bg-gray-200 rounded w-32"></div>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-6 bg-white shadow-lg">
