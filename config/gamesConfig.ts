@@ -35,7 +35,7 @@ export const gamesList: Game[] = [
     category: 'handwriting',
     component: SpellStack,
     config: {
-      scoring: { type: 'session', enabled: true },
+      scoring: { type: 'highest', enabled: true },
       leveling: { enabled: false }
     }
   },
