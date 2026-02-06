@@ -81,7 +81,7 @@ export default function SpeechExplorer({ onLevelUp, onScoreUpdate, level, curren
         formData.append('file', file);
 
         try {
-            const res = await fetch('http://localhost:8000/speech-recognize/speech-recognize-test', {
+            const res = await fetch('http://localhost:8000/speech-recognize/speech-recognize-word', {
                 method: 'POST',
                 body: formData,
             });
