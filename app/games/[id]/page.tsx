@@ -10,13 +10,13 @@ import { Card } from '@/components/ui/card';
 import { gamesList } from '@/config/gamesConfig';
 import { useGameProgress } from '@/contexts/game-progress-context';
 import { useEffect } from 'react';
+import { ScoreCard } from '@/components/game-hud/ScoreCard';
+import { LevelCard } from '@/components/game-hud/LevelCard';
 
 
 export default function GamePage() {
   const params = useParams();
   const id = params.id as string;
-
-  // CHANGED: Find game by string id instead of number
   const game = gamesList.find((g) => g.id === id);
 
   const [score, setScore] = useState(0);
@@ -24,14 +24,7 @@ export default function GamePage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
 
-  const gameProgress = useGameProgress();
-
-  useEffect(() => {
-    if (gameProgress.gameProgress) {
-      setLevel(gameProgress.gameProgress.level || 1);
-      setScore(gameProgress.gameProgress.scoreDelta || 0);
-    }
-  }, [gameProgress.gameProgress]);
+  // const gameProgress = useGameProgress();
 
   if (!game) {
     return (
@@ -52,33 +45,12 @@ export default function GamePage() {
     );
   }
 
-  // CHANGED: Get component directly from game object
   const GameComponent = game.component;
-
-  const handlePlayGame = () => {
-    setIsPlaying(true);
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 2000);
-  };
-
-  const handleNextLevel = () => {
-    setLevel(level + 1);
-    setScore(score + 100);
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 2000);
-  };
-
-  const handleRetry = () => {
-    setIsPlaying(false);
-    setLevel(1);
-    setScore(0);
-  };
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
       <Header />
 
-      {/* Game Header */}
       <section className="px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <Link href="/games">
@@ -89,7 +61,6 @@ export default function GamePage() {
         </div>
       </section>
 
-      {/* Main Game Area */}
       <section className="px-4 py-8">
         <div className="max-w-8xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -102,21 +73,15 @@ export default function GamePage() {
                       <div className="text-9xl mb-6 animate-bounce">{game.emoji}</div>
                       <h1 className="text-4xl font-bold text-white mb-4">{game.name}</h1>
                       <p className="text-white/90 text-lg mb-8 max-w-md">{game.description}</p>
-                      <Button
-                        size="lg"
-                        onClick={handlePlayGame}
-                        className="bg-white text-foreground hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl font-bold"
-                      >
+                      <Button size="lg" onClick={() => setIsPlaying(true)} className="bg-white text-foreground hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl font-bold">
                         Start Game! 🎮
                       </Button>
                     </div>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center min-h-[400px]">
-                      {/* CHANGED: Render component directly without props */}
                       <GameComponent
-                        onLevelUp={handleNextLevel}
+                        onLevelUp={() => setLevel(l => l + 1)}
                         onScoreUpdate={setScore}
-                        gameData={game}
                         level={level}
                         currentScore={score}
                       />
@@ -126,89 +91,39 @@ export default function GamePage() {
               </Card>
             </div>
 
-            {/* Right Sidebar */}
+            {/* Right Sidebar - Dynamic HUD */}
             <div className="flex flex-col gap-6">
-              {/* Score Card */}
-              <Card className="p-6 bg-white shadow-lg">
-                <h3 className="text-xl font-bold text-foreground mb-4">📊 Your Progress</h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-foreground/60 mb-1">Current Score</p>
-                    <p className="text-4xl font-bold text-primary">{score}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-foreground/60 mb-1">Level</p>
-                    <p className="text-4xl font-bold text-secondary">{level}</p>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-4 mt-4">
-                    <div
-                      className="bg-gradient-to-r from-primary to-secondary h-4 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(level * 25, 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </Card>
+              {game.config.scoring?.enabled && (
+                <ScoreCard 
+                  gameId={game.id}
+                  currentScore={score}
+                  scoringType={game.config.scoring.type}
+                />
+              )}
 
-              {/* Game Info */}
+              {game.config.leveling?.enabled && (
+                <LevelCard 
+                  gameId={game.id}
+                  currentLevel={level}
+                  maxLevel={game.config.leveling.maxLevel}
+                />
+              )}
+
               <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg">
-                <h3 className="text-lg font-bold text-foreground mb-4">ℹ️ Game Info</h3>
+                <h3 className="text-lg font-bold mb-4">ℹ️ Game Info</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-foreground/70">Category</span>
                     <span className="font-bold text-primary capitalize">{game.category}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-foreground/70">Type</span>
-                    <span className="font-bold text-primary">Educational</span>
-                  </div>
                 </div>
               </Card>
-
-              {/* Achievements */}
-              <Card className="p-6 bg-white shadow-lg">
-                <h3 className="text-lg font-bold text-foreground mb-4">🏆 Achievements</h3>
-                <div className="flex flex-wrap gap-3">
-                  {score > 0 && <div className="text-3xl" title="First Play">🎮</div>}
-                  {level > 1 && <div className="text-3xl" title="Level Up">⭐</div>}
-                  {score >= 200 && <div className="text-3xl" title="Score Champ">🥇</div>}
-                  {!isPlaying && score === 0 && <div className="text-3xl opacity-30" title="Locked">🔒</div>}
-                </div>
-              </Card>
-
-              {/* CTA */}
-              {!isPlaying && (
-                <Button
-                  size="lg"
-                  onClick={handlePlayGame}
-                  className="w-full bg-accent hover:bg-yellow-400 text-foreground text-lg py-6 rounded-2xl font-bold"
-                >
-                  Start Now! 🚀
-                </Button>
-              )}
+              
             </div>
           </div>
         </div>
       </section>
 
-      {/* Confetti Animation */}
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-bounce"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: '-10px',
-                animation: `fall 2s ease-out forwards`,
-                animationDelay: `${i * 0.05}s`,
-              }}
-            >
-              {['🎉', '⭐', '🎊'][Math.floor(Math.random() * 3)]}
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Footer */}
       <footer className="bg-primary text-white py-12 px-4 mt-16">
