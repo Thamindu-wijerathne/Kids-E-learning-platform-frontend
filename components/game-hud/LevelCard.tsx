@@ -2,6 +2,7 @@
 
 import { Card } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
+import { saveLevelApi, getLevelApi } from '@/services/game-progress-service';
 
 interface LevelCardProps {
   gameId: string;
@@ -11,24 +12,59 @@ interface LevelCardProps {
 
 export function LevelCard({ gameId, currentLevel, maxLevel = 10 }: LevelCardProps) {
   const [level, setLevel] = useState(currentLevel);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Placeholder API
+  // Fetch initial level
   useEffect(() => {
-    fetch(`/api/levels/${gameId}`)
-      .then(res => res.json())
-      .then(data => setLevel(data.level || currentLevel))
-      .catch(() => setLevel(currentLevel));
-  }, [gameId, currentLevel]);
+    const fetchLevel = async () => {
+      try {
+        const data = await getLevelApi(gameId);
+        setLevel(data.level || 1);
+      } catch (error) {
+        console.error('Failed to fetch level:', error);
+        setLevel(currentLevel);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
+    fetchLevel();
+  }, [gameId]);
+
+  // Update level when currentLevel changes
   useEffect(() => {
-    fetch(`/api/levels/${gameId}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ level: currentLevel })
-    });
-  }, [gameId, currentLevel]);
+    if (currentLevel > level) {
+      setLevel(currentLevel);
+    }
+  }, [currentLevel]);
+
+  // Save level when it changes
+  useEffect(() => {
+    if (level === 1 && currentLevel === 1) return;
+
+    const saveLevel = async () => {
+      try {
+        await saveLevelApi(gameId, level);
+      } catch (error) {
+        console.error('Failed to save level:', error);
+      }
+    };
+
+    saveLevel();
+  }, [gameId, level]);
 
   const progress = Math.min((level / maxLevel) * 100, 100);
+  
+  if (isLoading) {
+    return (
+      <Card className="p-6 bg-white shadow-lg">
+        <div className="animate-pulse">
+          <div className="h-4 bg-gray-200 rounded w-24 mb-4"></div>
+          <div className="h-10 bg-gray-200 rounded w-32"></div>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="p-6 bg-white shadow-lg">
