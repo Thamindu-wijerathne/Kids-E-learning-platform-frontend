@@ -1,5 +1,6 @@
-import { SpellStack  } from '@/components/games/SpellStack';
-import WordBuilder from '@/components/games/WordBuilder';  
+import { SpellStack } from '@/components/games/SpellStack';
+import WordBuilder from '@/components/games/WordBuilder';
+import SpeechExplorer from '@/components/games/SpeechExplorer';
 
 export interface Game {
   id: string;
@@ -7,7 +8,7 @@ export interface Game {
   description: string;
   emoji: string;
   color: string;
-  category: 'handwriting' | 'patterns' | 'letters' | 'memory';
+  category: 'handwriting' | 'patterns' | 'letters' | 'memory' | 'speech';
   component: React.ComponentType<any>;
 }
 
@@ -30,5 +31,15 @@ export const gamesList: Game[] = [
     color: 'bg-orange-400',
     category: 'handwriting',
     component: WordBuilder,
+  },
+
+  {
+    id: 'speechexplorer',
+    name: 'Speech Explorer',
+    description: 'Speak into the microphone and see if the computer can understand you!',
+    emoji: '🎤',
+    color: 'bg-indigo-400',
+    category: 'memory',
+    component: SpeechExplorer,
   },
 ];

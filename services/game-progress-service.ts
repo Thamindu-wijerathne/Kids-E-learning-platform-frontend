@@ -11,7 +11,7 @@ export const saveGameProgressApi = async (
 export const saveWordBuilderProgressApi = async (
     progress: GameProgress
 ): Promise<{ success: boolean }> => {
-    const res = await api.post("/game-progress/save-progress/word-builder", progress);
+    const res = await api.post("/word-builder/save-progress", progress);
     return res.data;
 };
 
