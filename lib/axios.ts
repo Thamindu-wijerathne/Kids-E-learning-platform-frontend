@@ -7,6 +7,7 @@ export const api = axios.create({
   },
 });
 
+// pass token with every request 
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== "undefined") {
@@ -18,4 +19,17 @@ api.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// handle 401 globally
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("playlearn_token");
+      window.location.href = "/login";
+    } else {
+      return Promise.reject(error);
+    }
+  }
 );
