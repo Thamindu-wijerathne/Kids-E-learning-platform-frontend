@@ -25,6 +25,7 @@ export const saveLetterTraceProgressApi = async (
 export const saveSpeechExplorerProgressApi = async (
     progress: SpeechExplorerGameProgress
 ): Promise<{ success: boolean }> => {
+    // console.log("Saving Speech Explorer progress: ", progress);
     const res = await api.post("/game-progress/save-progress/speech-explorer", progress);
     return res.data;
 };

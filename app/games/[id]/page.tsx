@@ -29,7 +29,7 @@ export default function GamePage() {
   useEffect(() => {
     if (gameProgress.gameProgress) {
       setLevel(gameProgress.gameProgress.level || 1);
-      setScore(gameProgress.gameProgress.scoreDelta || 0);
+      setScore(gameProgress.gameProgress.scoreDelta || gameProgress.gameProgress.score || 0);
     }
   }, [gameProgress.gameProgress]);
 

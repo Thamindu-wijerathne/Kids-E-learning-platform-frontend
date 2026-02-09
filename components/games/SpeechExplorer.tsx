@@ -78,7 +78,8 @@ export default function SpeechExplorer({ onLevelUp, onScoreUpdate, level, curren
                 .toLowerCase()
                 .includes(target.word.toLowerCase());
 
-                if (isCorrect) {
+
+                if (!isCorrect) {
                     setFeedback('correct');
 
                     const timeSpentMs = Date.now() - screenStartTimeRef.current;
