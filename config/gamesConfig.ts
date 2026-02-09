@@ -50,7 +50,7 @@ export const gamesList: Game[] = [
     component: WordBuilder,
     config: {
       scoring: { type: 'persistent', enabled: true },
-      leveling: { enabled: true, maxLevel: 10 }
+      leveling: { enabled: true, maxLevel: 30 }
     }
   },
 ];

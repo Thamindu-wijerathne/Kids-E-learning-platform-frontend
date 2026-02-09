@@ -3,6 +3,7 @@
 import { Card } from '@/components/ui/card';
 import { useEffect, useState } from 'react';
 import { saveScoreApi, getScoreApi } from '@/services/game-progress-service';
+import { AxiosError } from 'axios';
 
 interface ScoreCardProps {
   gameId: string;
@@ -28,9 +29,15 @@ export function ScoreCard({ gameId, currentScore, scoringType }: ScoreCardProps)
         } else {
           setDisplayScore(currentScore);
         }
-      } catch (error) {
+      } catch (error: any) {
+        const axiosError = error as any;
+        if (axiosError?.response?.status === 401) {
+        console.log('User not authenticated, using session scores only');
+        setDisplayScore(currentScore);
+      } else {
         console.error('Failed to fetch scores:', error);
         setDisplayScore(currentScore);
+      }
       } finally {
         setIsLoading(false);
       }
@@ -43,6 +50,8 @@ export function ScoreCard({ gameId, currentScore, scoringType }: ScoreCardProps)
   useEffect(() => {
     if (scoringType === 'persistent') {
       setDisplayScore(totalScore + currentScore);
+    } else if (scoringType === "highest") {
+      setDisplayScore(currentScore)
     } else {
       setDisplayScore(currentScore);
     }

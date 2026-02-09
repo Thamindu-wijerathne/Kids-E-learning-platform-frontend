@@ -20,9 +20,13 @@ export function LevelCard({ gameId, currentLevel, maxLevel = 10 }: LevelCardProp
       try {
         const data = await getLevelApi(gameId);
         setLevel(data.level || 1);
-      } catch (error) {
+      } catch (error: any) {if (error?.response?.status === 401) {
+        console.log('User not authenticated, using session levels only');
+        setLevel(currentLevel);
+      } else {
         console.error('Failed to fetch level:', error);
         setLevel(currentLevel);
+      }
       } finally {
         setIsLoading(false);
       }
@@ -33,9 +37,7 @@ export function LevelCard({ gameId, currentLevel, maxLevel = 10 }: LevelCardProp
 
   // Update level when currentLevel changes
   useEffect(() => {
-    if (currentLevel > level) {
-      setLevel(currentLevel);
-    }
+    setLevel(currentLevel);
   }, [currentLevel]);
 
   // Save level when it changes
