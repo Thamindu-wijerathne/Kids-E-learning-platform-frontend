@@ -1,5 +1,5 @@
 import { api } from "../lib/axios";
-import { GameProgress } from "../types/auth";
+import { GameProgress, SpeechExplorerGameProgress } from "../types/auth";
 
 export const saveGameProgressApi = async (
     progress: GameProgress
@@ -11,7 +11,7 @@ export const saveGameProgressApi = async (
 export const saveWordBuilderProgressApi = async (
     progress: GameProgress
 ): Promise<{ success: boolean }> => {
-    const res = await api.post("/game-progress/save-progress/word-builder", progress);
+    const res = await api.post("/word-builder/save-progress", progress);
     return res.data;
 };
 
@@ -21,6 +21,15 @@ export const saveLetterTraceProgressApi = async (
     const res = await api.post("/game-progress/save-progress/letter-trace", progress);
     return res.data;
 };
+
+export const saveSpeechExplorerProgressApi = async (
+    progress: SpeechExplorerGameProgress
+): Promise<{ success: boolean }> => {
+    // console.log("Saving Speech Explorer progress: ", progress);
+    const res = await api.post("/game-progress/save-progress/speech-explorer", progress);
+    return res.data;
+};
+
 
 export const getGameProgressApi = async (gameName: string): Promise<GameProgress> => {
     const res = await api.get(`/game-progress/get-progress/${gameName}`);

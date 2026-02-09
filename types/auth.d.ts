@@ -56,3 +56,14 @@ export interface GameProgressContextType {
   currentGameId: string | null;
   currentGameName: string | null;
 }
+
+export interface SpeechExplorerGameProgress {
+  game: string;
+  level: number;
+  score: number;
+  targetWord: string;
+  recognizedText: string;
+  index: number;
+  timestamp: number;
+  timeSpent: number;
+}

@@ -17,8 +17,6 @@ export const GameProgressProvider = ({ children }: { children: ReactNode }) => {
     const [gameProgress, setGameProgress] = useState<GameProgress | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [startTime, setStartTime] = useState<number | null>(null);
-
-    const { token } = useAuth();
     const isSavingRef = useRef(false); // prevent double save
 
 

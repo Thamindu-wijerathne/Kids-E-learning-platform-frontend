@@ -1,5 +1,6 @@
-import { SpellStack  } from '@/components/games/SpellStack';
-import WordBuilder from '@/components/games/WordBuilder';  
+import { SpellStack } from '@/components/games/SpellStack';
+import WordBuilder from '@/components/games/WordBuilder';
+import SpeechExplorer from '@/components/games/SpeechExplorer';
 
 export type ScoringType = 'session' | 'persistent' | 'highest';
 
@@ -20,7 +21,7 @@ export interface Game {
   description: string;
   emoji: string;
   color: string;
-  category: 'handwriting' | 'patterns' | 'letters' | 'memory';
+  category: 'handwriting' | 'patterns' | 'letters' | 'memory' | 'speech';
   component: React.ComponentType<any>;
   config: GameConfig;
 }
@@ -52,5 +53,15 @@ export const gamesList: Game[] = [
       scoring: { type: 'persistent', enabled: true },
       leveling: { enabled: true, maxLevel: 30 }
     }
+  },
+
+  {
+    id: 'speechexplorer',
+    name: 'Speech Explorer',
+    description: 'Speak into the microphone and see if the computer can understand you!',
+    emoji: '🎤',
+    color: 'bg-indigo-400',
+    category: 'memory',
+    component: SpeechExplorer,
   },
 ];
