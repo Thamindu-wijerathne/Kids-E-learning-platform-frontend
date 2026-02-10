@@ -1,21 +1,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/auth-context';
+import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/header';
 import { useEffect } from 'react';
 
 export default function Profile() {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/signin');
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
+
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading profile...</div>;
+  }
 
   if (!user) {
     return null;
@@ -36,7 +40,7 @@ export default function Profile() {
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
+    <main className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -48,7 +52,7 @@ export default function Profile() {
               <h1 className="text-4xl font-bold mb-2">{user.name}</h1>
               <p className="text-xl text-white/90 mb-4">{user.email}</p>
               <div className="flex flex-wrap gap-3">
-                <Button className="bg-accent hover:bg-yellow-400 text-foreground font-bold rounded-xl">
+                <Button className="bg-accent hover:brightness-110 text-accent-foreground font-bold rounded-xl">
                   Edit Profile ✏️
                 </Button>
                 <Button variant="outline" className="bg-white/20 hover:bg-white/30 text-white border-white font-bold rounded-xl">
@@ -87,7 +91,7 @@ export default function Profile() {
         {/* Learning Stats */}
         <Card className="p-8 shadow-lg">
           <h2 className="text-2xl font-bold text-primary mb-6">Learning Statistics</h2>
-          
+
           <div className="space-y-6">
             <div>
               <div className="flex justify-between items-center mb-2">

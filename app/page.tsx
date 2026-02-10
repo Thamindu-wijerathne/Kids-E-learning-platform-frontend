@@ -15,27 +15,27 @@ export default function Home() {
       id: 1,
       name: 'Letter Trace',
       description: 'Learn to write letters beautifully',
-      color: 'bg-blue-400',
+      color: 'bg-primary/40',
       emoji: '✏️',
     },
     {
       id: 2,
       name: 'Shape Match',
       description: 'Match shapes and patterns',
-      color: 'bg-yellow-300',
+      color: 'bg-secondary/60',
       emoji: '🟠',
     },
     {
       id: 3,
       name: 'Number Quest',
       description: 'Count and solve math puzzles',
-      color: 'bg-green-400',
+      color: 'bg-accent/40',
       emoji: '🔢',
     },
   ];
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
+    <main className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <Header />
 
       {/* Hero Section */}
@@ -62,7 +62,7 @@ export default function Home() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="text-lg px-8 py-6 rounded-2xl border-2 border-primary text-primary hover:bg-blue-50 bg-transparent"
+                  className="text-lg px-8 py-6 rounded-2xl border-2 border-primary text-primary hover:bg-primary/10 bg-transparent"
                 >
                   Learn More
                 </Button>
@@ -88,9 +88,9 @@ export default function Home() {
             {/* Right: Illustration */}
             <div className="flex justify-center">
               <div className="relative w-full max-w-sm">
-                <div className="absolute -top-8 -right-8 w-32 h-32 bg-yellow-300 rounded-full opacity-20 blur-3xl"></div>
-                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-blue-300 rounded-full opacity-20 blur-3xl"></div>
-                <div className="relative bg-gradient-to-br from-blue-100 to-blue-50 rounded-3xl p-8 shadow-xl">
+                <div className="absolute -top-8 -right-8 w-32 h-32 bg-secondary rounded-full opacity-20 blur-3xl"></div>
+                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-primary rounded-full opacity-20 blur-3xl"></div>
+                <div className="relative bg-gradient-to-br from-secondary/20 to-primary/10 rounded-3xl p-8 shadow-xl">
                   <div className="text-center">
                     <div className="text-8xl mb-4">🎨</div>
                     <p className="text-xl font-bold text-primary mb-2">Fun Learning</p>
@@ -180,7 +180,7 @@ export default function Home() {
             Join thousands of kids learning and having fun every day!
           </p>
           <Link href="/games">
-            <Button size="lg" className="bg-accent hover:bg-yellow-400 text-foreground text-lg px-10 py-6 rounded-2xl font-bold">
+            <Button size="lg" className="bg-secondary hover:brightness-110 text-secondary-foreground text-lg px-10 py-6 rounded-2xl font-bold">
               Explore All Games Now! 🎮
             </Button>
           </Link>

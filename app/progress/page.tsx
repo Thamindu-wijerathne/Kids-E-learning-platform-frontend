@@ -1,10 +1,12 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/app/auth-context';
+import { useAuth } from '@/contexts/auth-context';
+import { useUser } from '@/contexts/user-context';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/header';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
+import { gamesList } from '@/lib/gamesConfig';
 
 interface GameProgress {
   id: number;
@@ -16,87 +18,41 @@ interface GameProgress {
   timesPlayed: number;
   lastPlayed: string;
   status: 'beginner' | 'intermediate' | 'advanced';
+  timeSpent?: number;
 }
 
 export default function Progress() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  const { user } = useUser();
   const router = useRouter();
   const [sortBy, setSortBy] = useState('name');
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/signin');
+    if (!isLoading && !isAuthenticated) {
+      router.push('/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLoading, router]);
 
-  const gameProgress: GameProgress[] = [
-    {
-      id: 1,
-      name: 'Letter Trace',
-      emoji: '✏️',
-      progress: 90,
-      level: 15,
-      score: 2450,
-      timesPlayed: 24,
-      lastPlayed: '2 hours ago',
-      status: 'advanced',
-    },
-    {
-      id: 2,
-      name: 'Shape Match',
-      emoji: '🟠',
-      progress: 60,
-      level: 8,
-      score: 1850,
-      timesPlayed: 15,
-      lastPlayed: '1 day ago',
-      status: 'intermediate',
-    },
-    {
-      id: 3,
-      name: 'Number Quest',
-      emoji: '🔢',
-      progress: 45,
-      level: 5,
-      score: 1200,
-      timesPlayed: 10,
-      lastPlayed: '3 days ago',
-      status: 'beginner',
-    },
-    {
-      id: 4,
-      name: 'Color Wizard',
-      emoji: '🎨',
-      progress: 75,
-      level: 12,
-      score: 2100,
-      timesPlayed: 18,
-      lastPlayed: 'Today',
-      status: 'advanced',
-    },
-    {
-      id: 5,
-      name: 'Memory Master',
-      emoji: '🧠',
-      progress: 55,
-      level: 7,
-      score: 1650,
-      timesPlayed: 12,
-      lastPlayed: '5 days ago',
-      status: 'intermediate',
-    },
-    {
-      id: 6,
-      name: 'Sound Academy',
-      emoji: '🎵',
-      progress: 35,
-      level: 4,
-      score: 900,
-      timesPlayed: 6,
-      lastPlayed: '1 week ago',
-      status: 'beginner',
-    },
-  ];
+  const gameProgress: GameProgress[] = useMemo(() => {
+    if (!user?.games) return [];
+
+    return Object.entries(user.games).map(([gameKey, data]: [string, any], index) => {
+      const metadata = Object.values(gamesList).find(g => g.name === data.game);
+
+      return {
+        id: index,
+        name: data.game,
+        emoji: metadata?.emoji || '🎮',
+        progress: Math.min(100, (data.level / 20) * 100), // Assuming level 20 is a milestone
+        level: data.level,
+        score: data.scoreDelta || 0,
+        timesPlayed: data.timesPlayed || 1,
+        lastPlayed: 'Recently',
+        status: data.level > 15 ? 'advanced' : data.level > 5 ? 'intermediate' : 'beginner',
+        timeSpent: data.timeSpent || 0
+      };
+    });
+  }, [user?.games]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -105,7 +61,7 @@ export default function Progress() {
       case 'intermediate':
         return 'text-yellow-600 bg-yellow-50';
       default:
-        return 'text-blue-600 bg-blue-50';
+        return 'text-primary bg-primary/10';
     }
   };
 
@@ -120,27 +76,31 @@ export default function Progress() {
     }
   };
 
-  const sortedGames = [...gameProgress].sort((a, b) => {
-    switch (sortBy) {
-      case 'progress':
-        return b.progress - a.progress;
-      case 'level':
-        return b.level - a.level;
-      case 'score':
-        return b.score - a.score;
-      case 'recent':
-        return a.lastPlayed.localeCompare(b.lastPlayed);
-      default:
-        return a.name.localeCompare(b.name);
-    }
-  });
+  const sortedGames = useMemo(() => {
+    return [...gameProgress].sort((a, b) => {
+      switch (sortBy) {
+        case 'progress':
+          return b.progress - a.progress;
+        case 'level':
+          return b.level - a.level;
+        case 'score':
+          return b.score - a.score;
+        case 'time':
+          return (b.timeSpent || 0) - (a.timeSpent || 0);
+        default:
+          return a.name.localeCompare(b.name);
+      }
+    });
+  }, [gameProgress, sortBy]);
 
-  const totalScore = gameProgress.reduce((sum, game) => sum + game.score, 0);
+  const totalScore = user?.totalScore || 0;
   const totalTimesPlayed = gameProgress.reduce((sum, game) => sum + game.timesPlayed, 0);
-  const averageProgress = Math.round(gameProgress.reduce((sum, game) => sum + game.progress, 0) / gameProgress.length);
+  const averageProgress = gameProgress.length > 0
+    ? Math.round(gameProgress.reduce((sum, game) => sum + game.progress, 0) / gameProgress.length)
+    : 0;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
+    <main className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <Header />
 
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -154,18 +114,22 @@ export default function Progress() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card className="p-6 text-center shadow-lg">
             <div className="text-4xl mb-2">🎮</div>
-            <p className="text-3xl font-bold text-primary">{gameProgress.length}</p>
+            <p className="text-3xl font-bold text-primary">{user?.gameCount}</p>
             <p className="text-foreground/70 font-semibold">Games</p>
           </Card>
           <Card className="p-6 text-center shadow-lg">
             <div className="text-4xl mb-2">🏆</div>
-            <p className="text-3xl font-bold text-primary">{totalScore.toLocaleString()}</p>
+            <p className="text-3xl font-bold text-primary">{user?.totalScore}</p>
             <p className="text-foreground/70 font-semibold">Total Score</p>
           </Card>
           <Card className="p-6 text-center shadow-lg">
             <div className="text-4xl mb-2">⏱️</div>
-            <p className="text-3xl font-bold text-primary">{totalTimesPlayed}</p>
-            <p className="text-foreground/70 font-semibold">Times Played</p>
+            <p className="text-3xl font-bold text-primary">
+              {user?.totalTimeSpent ?
+                `${Math.floor(user.totalTimeSpent / 60)}m ${user.totalTimeSpent % 60}s` :
+                '0s'}
+            </p>
+            <p className="text-foreground/70 font-semibold">Total Time</p>
           </Card>
           <Card className="p-6 text-center shadow-lg">
             <div className="text-4xl mb-2">📊</div>
@@ -177,15 +141,14 @@ export default function Progress() {
         {/* Sort Controls */}
         <div className="mb-8 flex flex-wrap gap-3">
           <span className="self-center font-semibold text-foreground">Sort by:</span>
-          {['name', 'progress', 'level', 'score', 'recent'].map((option) => (
+          {['name', 'progress', 'level', 'score', 'time'].map((option) => (
             <button
               key={option}
               onClick={() => setSortBy(option)}
-              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${
-                sortBy === option
-                  ? 'bg-primary text-white'
-                  : 'bg-white border-2 border-primary text-primary hover:bg-blue-50'
-              }`}
+              className={`px-4 py-2 rounded-lg font-semibold transition-colors ${sortBy === option
+                ? 'bg-primary text-white'
+                : 'bg-white border-2 border-primary text-primary hover:bg-primary/10'
+                }`}
             >
               {option.charAt(0).toUpperCase() + option.slice(1)}
             </button>
@@ -213,18 +176,24 @@ export default function Progress() {
                 </div>
 
                 {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 md:gap-6 w-full md:w-auto">
+                <div className="grid grid-cols-4 gap-4 md:gap-6 w-full md:w-auto">
                   <div className="text-center">
                     <p className="text-xl font-bold text-primary">{game.score}</p>
                     <p className="text-xs text-foreground/70">Score</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xl font-bold text-primary">{game.timesPlayed}</p>
-                    <p className="text-xs text-foreground/70">Played</p>
+                    <p className="text-xl font-bold text-primary">{game.level}</p>
+                    <p className="text-xs text-foreground/70">Level</p>
                   </div>
                   <div className="text-center">
                     <p className="text-xl font-bold text-primary">{game.progress}%</p>
                     <p className="text-xs text-foreground/70">Progress</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xl font-bold text-primary">
+                      {(game as any).timeSpent ? `${Math.floor((game as any).timeSpent / 60)}m` : '0m'}
+                    </p>
+                    <p className="text-xs text-foreground/70">Time</p>
                   </div>
                 </div>
               </div>
@@ -251,7 +220,7 @@ export default function Progress() {
           <div className="text-5xl mb-4">🌟</div>
           <h2 className="text-2xl font-bold mb-3">You're Doing Amazing!</h2>
           <p className="text-lg text-white/90 mb-6">
-            Keep up the great work! Your consistent effort is paying off. 
+            Keep up the great work! Your consistent effort is paying off.
             {averageProgress >= 75 ? " You're a superstar! 🚀" : " Just a little more to reach mastery!"}
           </p>
           <p className="text-sm text-white/80">

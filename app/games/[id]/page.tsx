@@ -1,104 +1,30 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { useState } from 'react';
 import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { gamesList } from '@/lib/gamesConfig';
+import { useGameProgress } from '@/contexts/game-progress-context';
+import { useEffect } from 'react';
+import { ScoreCard } from '@/components/game-hud/ScoreCard';
+import { LevelCard } from '@/components/game-hud/LevelCard';
 
-const gamesData: Record<number, any> = {
-  1: {
-    id: 1,
-    name: 'Letter Trace',
-    description: 'Learn to write letters beautifully with guided exercises',
-    emoji: '✏️',
-    color: 'bg-blue-400',
-    difficulty: 'Easy',
-    duration: '10 min',
-    instructions: 'Follow the dotted lines to trace letters. Be as smooth as possible!',
-  },
-  2: {
-    id: 2,
-    name: 'Shape Match',
-    description: 'Match shapes and patterns to complete puzzles',
-    emoji: '🟠',
-    color: 'bg-yellow-300',
-    difficulty: 'Medium',
-    duration: '15 min',
-    instructions: 'Drag and drop shapes to match the pattern shown at the top.',
-  },
-  3: {
-    id: 3,
-    name: 'Number Quest',
-    description: 'Count and solve exciting math puzzles',
-    emoji: '🔢',
-    color: 'bg-green-400',
-    difficulty: 'Medium',
-    duration: '12 min',
-    instructions: 'Count the objects and click the correct number.',
-  },
-  4: {
-    id: 4,
-    name: 'Color Explorer',
-    description: 'Learn colors by sorting and matching items',
-    emoji: '🎨',
-    color: 'bg-purple-400',
-    difficulty: 'Easy',
-    duration: '10 min',
-    instructions: 'Sort items by color and learn color names.',
-  },
-  5: {
-    id: 5,
-    name: 'Alphabet Adventure',
-    description: 'Journey through letters and word building',
-    emoji: '📚',
-    color: 'bg-red-400',
-    difficulty: 'Medium',
-    duration: '15 min',
-    instructions: 'Find the correct letters to spell words.',
-  },
-  6: {
-    id: 6,
-    name: 'Memory Master',
-    description: 'Test your memory with fun card matching games',
-    emoji: '🧠',
-    color: 'bg-indigo-400',
-    difficulty: 'Medium',
-    duration: '12 min',
-    instructions: 'Flip cards to find matching pairs.',
-  },
-  7: {
-    id: 7,
-    name: 'Puzzle Pal',
-    description: 'Solve logic puzzles and brain teasers',
-    emoji: '🧩',
-    color: 'bg-orange-400',
-    difficulty: 'Hard',
-    duration: '20 min',
-    instructions: 'Use logic to solve the puzzles step by step.',
-  },
-  8: {
-    id: 8,
-    name: 'Sound Safari',
-    description: 'Discover animals and learn their sounds',
-    emoji: '🦁',
-    color: 'bg-amber-400',
-    difficulty: 'Easy',
-    duration: '10 min',
-    instructions: 'Click animals to hear their sounds and learn about them.',
-  },
-};
 
 export default function GamePage() {
   const params = useParams();
-  const gameId = parseInt(params.id as string);
-  const game = gamesData[gameId];
+  const id = params.id as string;
+  const game = gamesList.find((g) => g.id === id);
 
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
+
+  // const gameProgress = useGameProgress();
 
   if (!game) {
     return (
@@ -119,30 +45,12 @@ export default function GamePage() {
     );
   }
 
-  const handlePlayGame = () => {
-    setIsPlaying(true);
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 2000);
-  };
-
-  const handleNextLevel = () => {
-    setLevel(level + 1);
-    setScore(score + 100);
-    setShowConfetti(true);
-    setTimeout(() => setShowConfetti(false), 2000);
-  };
-
-  const handleRetry = () => {
-    setIsPlaying(false);
-    setLevel(1);
-    setScore(0);
-  };
+  const GameComponent = game.component;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-background to-blue-50">
       <Header />
 
-      {/* Game Header */}
       <section className="px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <Link href="/games">
@@ -153,9 +61,8 @@ export default function GamePage() {
         </div>
       </section>
 
-      {/* Main Game Area */}
       <section className="px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-8xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Game Canvas */}
             <div className="lg:col-span-2">
@@ -165,126 +72,58 @@ export default function GamePage() {
                     <div className="text-center">
                       <div className="text-9xl mb-6 animate-bounce">{game.emoji}</div>
                       <h1 className="text-4xl font-bold text-white mb-4">{game.name}</h1>
-                      <p className="text-white/90 text-lg mb-8 max-w-md">{game.instructions}</p>
-                      <Button
-                        size="lg"
-                        onClick={handlePlayGame}
-                        className="bg-white text-foreground hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl font-bold"
-                      >
+                      <p className="text-white/90 text-lg mb-8 max-w-md">{game.description}</p>
+                      <Button size="lg" onClick={() => setIsPlaying(true)} className="bg-white text-foreground hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl font-bold">
                         Start Game! 🎮
                       </Button>
                     </div>
                   ) : (
-                    <div className="text-center w-full">
-                      <div className="text-7xl mb-8">{game.emoji}</div>
-                      <h2 className="text-4xl font-bold text-white mb-4">Level {level}</h2>
-                      <p className="text-white/90 text-xl mb-8">
-                        Play the game here! (Interactive game would render here)
-                      </p>
-                      <div className="flex gap-4 justify-center">
-                        <Button
-                          onClick={handleNextLevel}
-                          className="bg-green-500 hover:bg-green-600 text-white text-lg px-8 py-4 rounded-xl"
-                        >
-                          Complete Level ✓
-                        </Button>
-                        <Button
-                          onClick={handleRetry}
-                          variant="outline"
-                          className="border-2 border-white text-white hover:bg-white/20 text-lg px-8 py-4 rounded-xl bg-transparent"
-                        >
-                          Back
-                        </Button>
-                      </div>
+                    <div className="w-full h-full flex items-center justify-center min-h-[400px]">
+                      <GameComponent
+                        onLevelUp={() => setLevel(l => l + 1)}
+                        onScoreUpdate={setScore}
+                        level={level}
+                        currentScore={score}
+                      />
                     </div>
                   )}
                 </div>
               </Card>
             </div>
 
-            {/* Right Sidebar */}
+            {/* Right Sidebar - Dynamic HUD */}
             <div className="flex flex-col gap-6">
-              {/* Score Card */}
-              <Card className="p-6 bg-white shadow-lg">
-                <h3 className="text-xl font-bold text-foreground mb-4">📊 Your Progress</h3>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-foreground/60 mb-1">Current Score</p>
-                    <p className="text-4xl font-bold text-primary">{score}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-foreground/60 mb-1">Level</p>
-                    <p className="text-4xl font-bold text-secondary">{level}</p>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-4 mt-4">
-                    <div
-                      className="bg-gradient-to-r from-primary to-secondary h-4 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(level * 25, 100)}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </Card>
+              {game.config.scoring?.enabled && (
+                <ScoreCard 
+                  gameId={game.id}
+                  currentScore={score}
+                  scoringType={game.config.scoring.type}
+                />
+              )}
 
-              {/* Game Info */}
+              {game.config.leveling?.enabled && (
+                <LevelCard 
+                  gameId={game.id}
+                  currentLevel={level}
+                  maxLevel={game.config.leveling.maxLevel}
+                />
+              )}
+
               <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg">
-                <h3 className="text-lg font-bold text-foreground mb-4">ℹ️ Game Info</h3>
+                <h3 className="text-lg font-bold mb-4">ℹ️ Game Info</h3>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-foreground/70">Difficulty</span>
-                    <span className="font-bold text-primary">{game.difficulty}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-foreground/70">Duration</span>
-                    <span className="font-bold text-primary">{game.duration}</span>
+                    <span className="text-foreground/70">Category</span>
+                    <span className="font-bold text-primary capitalize">{game.category}</span>
                   </div>
                 </div>
               </Card>
-
-              {/* Achievements */}
-              <Card className="p-6 bg-white shadow-lg">
-                <h3 className="text-lg font-bold text-foreground mb-4">🏆 Achievements</h3>
-                <div className="flex flex-wrap gap-3">
-                  {score > 0 && <div className="text-3xl" title="First Play">🎮</div>}
-                  {level > 1 && <div className="text-3xl" title="Level Up">⭐</div>}
-                  {score >= 200 && <div className="text-3xl" title="Score Champ">🥇</div>}
-                  {!isPlaying && score === 0 && <div className="text-3xl opacity-30" title="Locked">🔒</div>}
-                </div>
-              </Card>
-
-              {/* CTA */}
-              {!isPlaying && (
-                <Button
-                  size="lg"
-                  onClick={handlePlayGame}
-                  className="w-full bg-accent hover:bg-yellow-400 text-foreground text-lg py-6 rounded-2xl font-bold"
-                >
-                  Start Now! 🚀
-                </Button>
-              )}
+              
             </div>
           </div>
         </div>
       </section>
 
-      {/* Confetti Animation */}
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none overflow-hidden">
-          {[...Array(20)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-bounce"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: '-10px',
-                animation: `fall 2s ease-out forwards`,
-                animationDelay: `${i * 0.05}s`,
-              }}
-            >
-              {['🎉', '⭐', '🎊'][Math.floor(Math.random() * 3)]}
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Footer */}
       <footer className="bg-primary text-white py-12 px-4 mt-16">
