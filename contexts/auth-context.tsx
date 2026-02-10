@@ -30,8 +30,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("playlearn_token", res.access_token);
   };
 
-  const signup = async (name: string, email: string, password: string) => {
-    const res = await authService.signup({ name, email, password });
+  const signup = async (name: string, email: string, ageGroup: string, password: string) => {
+    const res = await authService.signup({ name, email, age_group: ageGroup, password });
     setUser(res.user);
     setToken(res.access_token);
     localStorage.setItem("playlearn_user", JSON.stringify(res.user));

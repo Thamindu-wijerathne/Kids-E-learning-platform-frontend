@@ -12,6 +12,7 @@ import Header from '@/components/header';
 export default function SignupPage() {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [ageGroup, setAgeGroup] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +25,7 @@ export default function SignupPage() {
         setIsLoading(true);
 
         try {
-            await signup(name, email, password);
+            await signup(name, email, ageGroup, password);
             router.push('/');
         } catch (err: any) {
             setError(err.response?.data?.message || 'Something went wrong. Please try again.');
@@ -93,6 +94,23 @@ export default function SignupPage() {
                                         placeholder="name@email.com"
                                         required
                                     />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-sm font-bold text-slate-700 ml-1">
+                                        Age Group
+                                    </label>
+                                    <select
+                                        value={ageGroup}
+                                        onChange={(e) => setAgeGroup(e.target.value)}
+                                        className="w-full h-14 px-5 rounded-2xl border-2 border-slate-100 focus:border-primary focus:ring-0 transition-all text-lg bg-white appearance-none cursor-pointer"
+                                        required
+                                    >
+                                        <option value="" disabled>Select Age Group</option>
+                                        <option value="5-7">5-7 Years</option>
+                                        <option value="7-9">7-9 Years</option>
+                                        <option value="9-11">9-11 Years</option>
+                                    </select>
                                 </div>
 
                                 <div className="space-y-2">

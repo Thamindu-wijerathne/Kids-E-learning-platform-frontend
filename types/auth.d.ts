@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  age_group: string;
   avatar?: string;
 }
 
@@ -18,6 +19,7 @@ export interface LoginResponse {
 export interface SignupRequest {
   name: string;
   email: string;
+  age_group: string;
   password: string;
 }
 
@@ -31,7 +33,7 @@ export interface AuthContextType {
   token: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (name: string, email: string, password: string) => Promise<void>;
+  signup: (name: string, email: string, ageGroup: string, password: string) => Promise<void>;
   logout: () => void;
   isLoading: boolean;
 }
