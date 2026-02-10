@@ -6,7 +6,7 @@ import { useUser } from '@/contexts/user-context';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/header';
 import { useEffect, useState, useMemo } from 'react';
-import { gamesData } from '@/lib/games';
+import { gamesList } from '@/lib/gamesConfig';
 
 interface GameProgress {
   id: number;
@@ -25,7 +25,7 @@ export default function Progress() {
   const { isAuthenticated, isLoading } = useAuth();
   const { user } = useUser();
   const router = useRouter();
-  const [sortBy, setSortBy] = useState('name');
+  const [sortBy, setSortBy] = useState<'name' | 'progress' | 'level' | 'score' | 'time'>('name');
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -37,7 +37,7 @@ export default function Progress() {
     if (!user?.games) return [];
 
     return Object.entries(user.games).map(([gameKey, data]: [string, any], index) => {
-      const metadata = Object.values(gamesData).find(g => g.name === data.game);
+      const metadata = Object.values(gamesList).find(g => g.name === data.game);
 
       return {
         id: index,
@@ -144,7 +144,7 @@ export default function Progress() {
           {['name', 'progress', 'level', 'score', 'time'].map((option) => (
             <button
               key={option}
-              onClick={() => setSortBy(option)}
+              onClick={() => setSortBy(option as any)}
               className={`px-4 py-2 rounded-lg font-semibold transition-colors ${sortBy === option
                 ? 'bg-primary text-white'
                 : 'bg-white border-2 border-primary text-primary hover:bg-primary/10'
