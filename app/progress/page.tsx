@@ -6,7 +6,7 @@ import { useUser } from '@/contexts/user-context';
 import { Card } from '@/components/ui/card';
 import Header from '@/components/header';
 import { useEffect, useState, useMemo } from 'react';
-import { gamesData } from '@/lib/games';
+import { gamesList } from '@/lib/gamesConfig';
 
 interface GameProgress {
   id: number;
@@ -37,7 +37,7 @@ export default function Progress() {
     if (!user?.games) return [];
 
     return Object.entries(user.games).map(([gameKey, data]: [string, any], index) => {
-      const metadata = Object.values(gamesData).find(g => g.name === data.game);
+      const metadata = Object.values(gamesList).find(g => g.name === data.game);
 
       return {
         id: index,
