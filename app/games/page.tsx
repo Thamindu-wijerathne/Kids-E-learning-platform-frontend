@@ -5,7 +5,7 @@ import Header from '@/components/header';
 import GameCard from '@/components/GameCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { gamesList } from '@/config/gamesConfig';
+import { gamesList } from '@/lib/gamesConfig';
 
 export default function GamesPage() {
   const [searchTerm, setSearchTerm] = useState('');

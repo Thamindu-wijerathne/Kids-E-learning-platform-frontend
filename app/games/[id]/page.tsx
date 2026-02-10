@@ -7,7 +7,7 @@ import { useState } from 'react';
 import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { gamesList } from '@/config/gamesConfig';
+import { gamesList } from '@/lib/gamesConfig';
 import { useGameProgress } from '@/contexts/game-progress-context';
 import { useEffect } from 'react';
 import { ScoreCard } from '@/components/game-hud/ScoreCard';

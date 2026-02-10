@@ -63,5 +63,9 @@ export const gamesList: Game[] = [
     color: 'bg-indigo-400',
     category: 'memory',
     component: SpeechExplorer,
+    config: {
+      scoring: { type: 'highest', enabled: true },
+      leveling: { enabled: false }
+    }
   },
 ];

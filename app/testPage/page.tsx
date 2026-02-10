@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import GameCard from '@/components/GameCard';
-import { gamesList } from '@/config/gamesConfig';
+import { gamesList } from '@/lib/gamesConfig';
 
 export default function GamesPage() {
   const [searchTerm, setSearchTerm] = useState('');
