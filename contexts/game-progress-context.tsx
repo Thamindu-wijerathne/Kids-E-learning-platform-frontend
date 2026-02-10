@@ -5,7 +5,7 @@ import { getGameProgressApi, saveGameProgressApi, saveWordBuilderProgressApi, sa
 import { useAuth } from "./auth-context";
 import { GameProgress, GameProgressContextType } from "../types/auth";
 import { useParams } from "next/navigation";
-import { gamesList } from "@/config/gamesConfig";
+import { gamesList } from "@/lib/gamesConfig";
 
 const GameProgressContext = createContext<GameProgressContextType | undefined>(undefined);
 

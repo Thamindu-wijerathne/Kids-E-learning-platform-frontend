@@ -11,11 +11,15 @@ interface LetterBlock {
   state: 'normal' | 'correct' | 'exploding';
 }
 
+interface SpellStackProps {
+  onScoreUpdate?: (score: number) => void;
+}
+
 const GRID_ROWS = 10;
 const GRID_COLS = 8;
 const LETTER_FREQUENCY = 'EEEEEEEEEEETTTTTTTTTAAAAAAAOOOOOOIIIIIIINNNNNNSSSSSSHHHHHHRRRRRDDDLLLUUUCCCMMMWWWFFFGGGYYYPPBBVVKJXQZ';
 
-export function SpellStack() {
+export function SpellStack({ onScoreUpdate }: SpellStackProps) {
   const [grid, setGrid] = useState<LetterBlock[]>([]);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -24,6 +28,10 @@ export function SpellStack() {
   const [message, setMessage] = useState({ text: 'Ready to play?', type: 'info' });
   const [inputWord, setInputWord] = useState('');
   const [isValidating, setIsValidating] = useState(false);
+
+  useEffect(() => {
+    onScoreUpdate?.(score);
+  }, [score, onScoreUpdate]);
 
   const applyGravity = useCallback((blocks: LetterBlock[]): LetterBlock[] => {
     let newBlocks = [...blocks];
@@ -137,8 +145,6 @@ export function SpellStack() {
     }
   };
 
-
-
   return (
     <div className="min-h-screen bg-[#E9F5F2] p-6 md:p-12 font-sans text-slate-700 flex items-center justify-center">
       <div className="max-w-4xl w-full">
@@ -146,7 +152,7 @@ export function SpellStack() {
         <div className="flex flex-row items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800">SpellStack</h1>
-            <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Score: {score}</p>
+            {/* <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Score: {score}</p> */}
           </div>
           
           <div className="flex gap-3">
