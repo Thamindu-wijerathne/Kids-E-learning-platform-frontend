@@ -107,9 +107,9 @@ export default function SignupPage() {
                                         required
                                     >
                                         <option value="" disabled>Select Age Group</option>
-                                        <option value="5-7">5-7 Years</option>
-                                        <option value="7-9">7-9 Years</option>
-                                        <option value="9-11">9-11 Years</option>
+                                        <option value="5-6">5-6 Years</option>
+                                        <option value="7-8">7-8 Years</option>
+                                        <option value="9-10">9-10 Years</option>
                                     </select>
                                 </div>
 
