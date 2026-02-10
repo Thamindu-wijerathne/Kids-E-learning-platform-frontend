@@ -59,13 +59,15 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
 
     const skipThisWord = () => {
         if (currentScore >= 50) {
+            onScoreUpdate?.(-50);
+
             saveGameProgress({
                 game: "Word Builder",
                 level: level,
                 difficulty: currentDifficulty,
                 word: currentPair.word,
                 isCorrect: false,
-                scoreDelta: currentScore - 50,
+                scoreDelta: -50,
                 timestamp: Date.now(),
             });
             initGame();
@@ -88,17 +90,12 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                     <p className="text-white/90 font-medium text-lg bg-white/10 px-4 py-1 rounded-full backdrop-blur-md border border-white/10">
                         Goal: Recognize the emoji and draw the letters!
                     </p>
-                    <div className="flex items-center gap-2">
-                        <span className={`px-4 py-1.5 rounded-2xl text-sm font-black uppercase tracking-widest shadow-lg ${currentDifficulty === 'easy' ? 'bg-emerald-400 text-emerald-950 shadow-emerald-500/20' :
-                                currentDifficulty === 'medium' ? 'bg-amber-400 text-amber-950 shadow-amber-500/20' :
-                                    'bg-rose-500 text-white shadow-rose-900/20'
-                            }`}>
-                            {currentDifficulty}
-                        </span>
-                        <div className="bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-2xl border border-white/20 text-white font-bold text-sm">
-                            Level {level}
-                        </div>
-                    </div>
+                    <span className={`px-4 py-1.5 rounded-2xl text-sm font-black uppercase tracking-widest shadow-lg ${currentDifficulty === 'easy' ? 'bg-emerald-400 text-emerald-950 shadow-emerald-500/20' :
+                            currentDifficulty === 'medium' ? 'bg-amber-400 text-amber-950 shadow-amber-500/20' :
+                                'bg-rose-500 text-white shadow-rose-900/20'
+                        }`}>
+                        {currentDifficulty}
+                    </span>
                 </div>
             </div>
 
@@ -143,23 +140,35 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                         <HandwritingcheckCanvas
                             expectedWord={currentPair.word}
                             onResult={(isCorrect) => {
-                                saveGameProgress({
-                                    game: "Word Builder",
-                                    level: isCorrect ? level + 1 : level,
-                                    difficulty: currentDifficulty,
-                                    word: currentPair.word,
-                                    isCorrect,
-                                    scoreDelta: isCorrect ? currentScore + 10 : currentScore,
-                                    timestamp: Date.now(),
-                                });
-
                                 if (isCorrect) {
                                     setFeedback('correct');
-                                    if (onScoreUpdate) onScoreUpdate(10);
-                                    if (onLevelUp) onLevelUp();
+                                    onScoreUpdate?.(10);
+                                    onLevelUp?.();
+
+                                    saveGameProgress({
+                                        game: "Word Builder",
+                                        level: level + 1,
+                                        difficulty: currentDifficulty,
+                                        word: currentPair.word,
+                                        isCorrect: true,
+                                        scoreDelta: 10,
+                                        timestamp: Date.now(),
+                                    });
+
                                     setTimeout(initGame, 1200);
                                 } else {
                                     setFeedback('wrong');
+
+                                    saveGameProgress({
+                                        game: "Word Builder",
+                                        level: level,
+                                        difficulty: currentDifficulty,
+                                        word: currentPair.word,
+                                        isCorrect: false,
+                                        scoreDelta: 0,
+                                        timestamp: Date.now(),
+                                    });
+                                    
                                     setTimeout(() => setFeedback(null), 1500);
                                 }
                             }}

@@ -2,6 +2,19 @@ import { SpellStack } from '@/components/games/SpellStack';
 import WordBuilder from '@/components/games/WordBuilder';
 import SpeechExplorer from '@/components/games/SpeechExplorer';
 
+export type ScoringType = 'session' | 'persistent' | 'highest';
+
+export interface GameConfig {
+  scoring?: {
+    type: ScoringType;
+    enabled: boolean;
+  };
+  leveling?: {
+    enabled: boolean;
+    maxLevel?: number;
+  };
+}
+
 export interface Game {
   id: string;
   name: string;
@@ -10,6 +23,7 @@ export interface Game {
   color: string;
   category: 'handwriting' | 'patterns' | 'letters' | 'memory' | 'speech';
   component: React.ComponentType<any>;
+  config: GameConfig;
 }
 
 export const gamesList: Game[] = [
@@ -21,6 +35,10 @@ export const gamesList: Game[] = [
     color: 'bg-emerald-400',
     category: 'handwriting',
     component: SpellStack,
+    config: {
+      scoring: { type: 'highest', enabled: true },
+      leveling: { enabled: false }
+    }
   },
 
   {
@@ -31,6 +49,10 @@ export const gamesList: Game[] = [
     color: 'bg-orange-400',
     category: 'handwriting',
     component: WordBuilder,
+    config: {
+      scoring: { type: 'persistent', enabled: true },
+      leveling: { enabled: true, maxLevel: 30 }
+    }
   },
 
   {
@@ -41,5 +63,9 @@ export const gamesList: Game[] = [
     color: 'bg-indigo-400',
     category: 'memory',
     component: SpeechExplorer,
+    config: {
+      scoring: { type: 'highest', enabled: true },
+      leveling: { enabled: false }
+    }
   },
 ];
