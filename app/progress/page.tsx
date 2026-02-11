@@ -7,6 +7,7 @@ import { Card } from '@/components/ui/card';
 import Header from '@/components/header';
 import { useEffect, useState, useMemo } from 'react';
 import { gamesList } from '@/lib/gamesConfig';
+import { api } from '@/lib/axios';
 
 interface GameProgress {
   id: number;
@@ -26,6 +27,8 @@ export default function Progress() {
   const { user } = useUser();
   const router = useRouter();
   const [sortBy, setSortBy] = useState('name');
+  const [gamesData, setGamesData] = useState<any>({});
+
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -34,25 +37,48 @@ export default function Progress() {
   }, [isAuthenticated, isLoading, router]);
 
   const gameProgress: GameProgress[] = useMemo(() => {
-    if (!user?.games) return [];
+    if (!gamesData) return [];
 
-    return Object.entries(user.games).map(([gameKey, data]: [string, any], index) => {
-      const metadata = Object.values(gamesList).find(g => g.name === data.game);
+    return Object.entries(gamesData).map(([gameKey, data]: [string, any], index) => {
+      const meta = (gamesList as any)[gameKey]; // best: gamesList keys match "wordbuilder", "spellstack"
+
+      const scores = data?.scores ?? {};
+      const score =
+        scores.totalScore ?? scores.highScore ?? scores.lastScore ?? 0;
+
+      const level = data?.level ?? 1;
+      const timeSpent = data?.timeSpent ?? 0;
 
       return {
         id: index,
-        name: data.game,
-        emoji: metadata?.emoji || '🎮',
-        progress: Math.min(100, (data.level / 20) * 100), // Assuming level 20 is a milestone
-        level: data.level,
-        score: data.scoreDelta || 0,
-        timesPlayed: data.timesPlayed || 1,
-        lastPlayed: 'Recently',
-        status: data.level > 15 ? 'advanced' : data.level > 5 ? 'intermediate' : 'beginner',
-        timeSpent: data.timeSpent || 0
+        name: meta?.name || gameKey,
+        emoji: meta?.emoji || "🎮",
+        progress: Math.min(100, (level / 20) * 100),
+        level,
+        score,
+        timesPlayed: data?.timesPlayed ?? 1,
+        lastPlayed: data?.lastPlayed ? new Date(data.lastPlayed).toLocaleString() : "Never",
+        status: level > 15 ? "advanced" : level > 5 ? "intermediate" : "beginner",
+        timeSpent
       };
     });
-  }, [user?.games]);
+  }, [gamesData]);
+
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const res = await api.get(`/game-progress/get-progress/all`);
+        setGamesData(res.data ?? {});
+        console.log("Fetched progress data:", res.data);
+      } catch (err) {
+        console.error("Error fetching game progress:", err);
+      }
+    };
+
+    fetchProgress();
+  }, []);
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
