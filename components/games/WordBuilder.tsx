@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import HandwritingcheckCanvas from '../HandwritingcheckCanvas';
 import { WORD_COLLECTION } from '@/lib/word-builder-data';
-import { useGameProgress } from '@/contexts/game-progress-context';
+// import { useGameProgress } from '@/contexts/game-progress-context';
 import { Butcherman } from 'next/font/google';
 import { Button } from '../ui/button';
 
@@ -23,7 +23,8 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
     const [shuffledPool, setShuffledPool] = useState<{ id: string; letter: string }[]>([]);
     const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
-    const { saveGameProgress } = useGameProgress();
+
+    // const { saveGameProgress } = useGameProgress();
 
     // Determine difficulty based on level
     const currentDifficulty = useMemo(() => {
@@ -59,17 +60,17 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
 
     const skipThisWord = () => {
         if (currentScore >= 50) {
-            onScoreUpdate?.(-50);
+            onScoreUpdate?.(currentScore - 50);
 
-            saveGameProgress({
-                game: "Word Builder",
-                level: level,
-                difficulty: currentDifficulty,
-                word: currentPair.word,
-                isCorrect: false,
-                scoreDelta: -50,
-                timestamp: Date.now(),
-            });
+            // saveGameProgress({
+            //     game: "Word Builder",
+            //     level: level,
+            //     difficulty: currentDifficulty,
+            //     word: currentPair.word,
+            //     isCorrect: false,
+            //     scoreDelta: -50,
+            //     timestamp: Date.now(),
+            // });
             initGame();
         }
     }
@@ -142,32 +143,12 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                             onResult={(isCorrect) => {
                                 if (isCorrect) {
                                     setFeedback('correct');
-                                    onScoreUpdate?.(10);
+                                    onScoreUpdate?.(currentScore + 10);
                                     onLevelUp?.();
-
-                                    saveGameProgress({
-                                        game: "Word Builder",
-                                        level: level + 1,
-                                        difficulty: currentDifficulty,
-                                        word: currentPair.word,
-                                        isCorrect: true,
-                                        scoreDelta: 10,
-                                        timestamp: Date.now(),
-                                    });
 
                                     setTimeout(initGame, 1200);
                                 } else {
                                     setFeedback('wrong');
-
-                                    saveGameProgress({
-                                        game: "Word Builder",
-                                        level: level,
-                                        difficulty: currentDifficulty,
-                                        word: currentPair.word,
-                                        isCorrect: false,
-                                        scoreDelta: 0,
-                                        timestamp: Date.now(),
-                                    });
                                     
                                     setTimeout(() => setFeedback(null), 1500);
                                 }
