@@ -50,7 +50,7 @@ export default function LoginPage() {
                                 🚀
                             </div>
                             <h1 className="text-4xl font-extrabold text-slate-800 mb-3 tracking-tight">
-                                Welcome Back!!
+                                Welcome Back!
                             </h1>
                             <p className="text-slate-500 font-medium">
                                 Log in to continue your adventure
