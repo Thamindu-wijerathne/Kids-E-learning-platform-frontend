@@ -1,6 +1,7 @@
 import { SpellStack } from '@/components/games/SpellStack';
 import WordBuilder from '@/components/games/WordBuilder';
 import SpeechExplorer from '@/components/games/SpeechExplorer';
+import MathMaster from '@/components/games/MathMaster';
 
 export type ScoringType = 'session' | 'persistent' | 'highest';
 
@@ -68,4 +69,19 @@ export const gamesList: Game[] = [
       leveling: { enabled: false }
     }
   },
+
+  {
+    id: 'math-master',
+    name: 'Math Master',
+    description: 'Master your math skills with fun equations and number puzzles! Solve the challenges to level up.',
+    emoji: '🔢',
+    color: 'bg-blue-400',
+    category: 'patterns',
+    component: MathMaster,
+    config: {
+      scoring: { type: 'persistent', enabled: true },
+      leveling: { enabled: true, maxLevel: 30 }
+    }
+  },
 ];
+

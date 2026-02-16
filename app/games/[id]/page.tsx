@@ -81,7 +81,7 @@ export default function GamePage() {
                     <div className="w-full h-full flex items-center justify-center min-h-[400px]">
                       <GameComponent
                         onLevelUp={() => setLevel(l => l + 1)}
-                        onScoreUpdate={setScore}
+                        onScoreUpdate={(points: number) => setScore(prev => prev + points)}
                         level={level}
                         currentScore={score}
                       />
@@ -94,7 +94,7 @@ export default function GamePage() {
             {/* Right Sidebar - Dynamic HUD */}
             <div className="flex flex-col gap-6">
               {game.config.scoring?.enabled && (
-                <ScoreCard 
+                <ScoreCard
                   gameId={game.id}
                   currentScore={score}
                   scoringType={game.config.scoring.type}
@@ -102,7 +102,7 @@ export default function GamePage() {
               )}
 
               {game.config.leveling?.enabled && (
-                <LevelCard 
+                <LevelCard
                   gameId={game.id}
                   currentLevel={level}
                   maxLevel={game.config.leveling.maxLevel}
@@ -118,7 +118,7 @@ export default function GamePage() {
                   </div>
                 </div>
               </Card>
-              
+
             </div>
           </div>
         </div>
