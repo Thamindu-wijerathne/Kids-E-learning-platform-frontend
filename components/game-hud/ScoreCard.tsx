@@ -23,7 +23,7 @@ export function ScoreCard({ gameId, currentScore, scoringType }: ScoreCardProps)
         const data = await getScoreApi(gameId);
         setHighScore(data.highScore || 0);
         setTotalScore(data.totalScore || 0);
-        
+
         if (scoringType === 'persistent') {
           setDisplayScore(data.totalScore + currentScore);
         } else {
@@ -32,12 +32,12 @@ export function ScoreCard({ gameId, currentScore, scoringType }: ScoreCardProps)
       } catch (error: any) {
         const axiosError = error as any;
         if (axiosError?.response?.status === 401) {
-        console.log('User not authenticated, using session scores only');
-        setDisplayScore(currentScore);
-      } else {
-        console.error('Failed to fetch scores:', error);
-        setDisplayScore(currentScore);
-      }
+          console.log('User not authenticated, using session scores only');
+          setDisplayScore(currentScore);
+        } else {
+          console.error('Failed to fetch scores:', error);
+          setDisplayScore(currentScore);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -58,20 +58,21 @@ export function ScoreCard({ gameId, currentScore, scoringType }: ScoreCardProps)
   }, [currentScore, totalScore, scoringType]);
 
 
-  // Save score periodically
+  // Save score when it changes
   useEffect(() => {
     if (currentScore === 0) return;
 
-    const interval = setInterval(async () => {
+    const saveScore = async () => {
       try {
         await saveScoreApi(gameId, currentScore, scoringType);
       } catch (error) {
         console.error('Failed to save score:', error);
       }
-    }, 5000);
+    };
 
-    return () => clearInterval(interval);
+    saveScore();
   }, [gameId, currentScore, scoringType]);
+
 
   if (isLoading) {
     return (

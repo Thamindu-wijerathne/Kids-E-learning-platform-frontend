@@ -138,8 +138,7 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
 
                 setResult(detected);
 
-                // onResult(detected === expected);
-                onResult(true);
+                onResult(detected === expected);
             } catch (err) {
                 console.error(err);
             } finally {
