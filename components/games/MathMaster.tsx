@@ -58,7 +58,6 @@ export default function MathMaster({ onLevelUp, onScoreUpdate, level, currentSco
     const [draggedTile, setDraggedTile] = useState<Tile | null>(null);
     const [draggedFromSlot, setDraggedFromSlot] = useState<number | null>(null);
 
-    const { saveGameProgress } = useGameProgress();
 
     const currentDifficulty = useMemo(() => {
         if (level <= 10) return 'easy';
@@ -75,11 +74,13 @@ export default function MathMaster({ onLevelUp, onScoreUpdate, level, currentSco
         setFeedback(null);
         setIsAnimating(false);
 
+        // Create pool: target items + distractors
         const targetItems = randomProblem.targetEquation.map((val, idx) => ({
             id: `target-${val}-${idx}-${Math.random()}`,
             value: val
         }));
 
+        // Add some distractors (random numbers and random operators)
         const distractorCount = Math.min(2 + Math.floor(level / 5), 5);
         const distractors = Array.from({ length: distractorCount }).map((_, i) => {
             const isOperator = Math.random() > 0.7;
@@ -112,39 +113,19 @@ export default function MathMaster({ onLevelUp, onScoreUpdate, level, currentSco
                 setFeedback('correct');
                 setIsAnimating(true);
                 onScoreUpdate?.(10);
-
-                saveGameProgress({
-                    game: "Math Master",
-                    level: level,
-                    difficulty: currentDifficulty,
-                    isCorrect: true,
-                    scoreDelta: 10,
-                    timestamp: Date.now(),
-                });
-
                 setTimeout(() => {
                     onLevelUp?.();
                     initGame();
                 }, 1500);
             } else {
                 setFeedback('wrong');
-
-                saveGameProgress({
-                    game: "Math Master",
-                    level: level,
-                    difficulty: currentDifficulty,
-                    isCorrect: false,
-                    scoreDelta: 0,
-                    timestamp: Date.now(),
-                });
-
                 setTimeout(() => {
                     setFeedback(null);
                     setSlotContents(new Array(currentProblem.targetEquation.length).fill(null));
                 }, 1500);
             }
         }
-    }, [slotContents, currentProblem, currentDifficulty, level, onScoreUpdate, onLevelUp, initGame, saveGameProgress, isAnimating]);
+    }, [slotContents, currentProblem, currentDifficulty, level, onScoreUpdate, onLevelUp, initGame, isAnimating]);
 
     // --- Drag & Drop Handlers ---
 

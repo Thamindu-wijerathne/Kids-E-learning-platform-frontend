@@ -52,11 +52,11 @@ export interface GameProgress {
 
 export interface GameProgressContextType {
   gameProgress: GameProgress | null;
-  saveGameProgress: (gameProgress: GameProgress) => void;
-  loadGameProgress: () => void;
   isLoading: boolean;
   currentGameId: string | null;
   currentGameName: string | null;
+  startTime: number | null;
+  calculateTime: (state: boolean) => Promise<string | void>;
 }
 
 export interface SpeechExplorerGameProgress {
