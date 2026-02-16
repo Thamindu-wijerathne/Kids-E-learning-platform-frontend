@@ -128,7 +128,7 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
             });
 
             try {
-                const res = await fetch('http://localhost:8000/ocr/handwriting-ocr', {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ocr/handwriting-ocr`, {
                     method: 'POST',
                     body: formData,
                 });
