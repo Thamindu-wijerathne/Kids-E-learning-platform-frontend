@@ -4,6 +4,8 @@ export interface User {
   email: string;
   age_group: string;
   avatar?: string;
+  selectedAvatar?: string;
+  selectedTheme?: string;
 }
 
 export interface LoginRequest {
