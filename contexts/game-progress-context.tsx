@@ -6,94 +6,52 @@ import { useAuth } from "./auth-context";
 import { GameProgress, GameProgressContextType } from "../types/auth";
 import { useParams } from "next/navigation";
 import { gamesList } from "@/lib/gamesConfig";
+import { api } from "@/lib/axios";
 
 const GameProgressContext = createContext<GameProgressContextType | undefined>(undefined);
 
 export const GameProgressProvider = ({ children }: { children: ReactNode }) => {
     const params = useParams();
     const currentGameId = params?.id ? (params.id as string) : null;
-    const currentGameName = currentGameId ? (gamesList.find(g => g.id === currentGameId)?.name || null) : null;
+    const currentGameName = currentGameId ? (gamesList.find(g => g.id === currentGameId)?.id || null) : null;
 
     const [gameProgress, setGameProgress] = useState<GameProgress | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [startTime, setStartTime] = useState<number | null>(null);
-    const isSavingRef = useRef(false); // prevent double save
 
-
-    const loadGameProgress = useCallback(async () => {
-        if (!currentGameName) return;
-
-        // Always set a start time when we attempt to load a game
-        setStartTime(Date.now());
-
-        try {
-            const progress = await getGameProgressApi(currentGameName);
-            console.log("Game progress loaded:", progress);
-            setGameProgress(progress);
-        } catch (err) {
-            console.error("Game progress load failed:", err);
-            // Even if it fails, we have startTime set now so saving will work later
-        }
-    }, [currentGameName]);
-
-    useEffect(() => {
-        const saved = localStorage.getItem("playlearn_game_progress");
-        if (saved) {
-            setGameProgress(JSON.parse(saved));
-            // Also set a start time if we are resuming from local storage
-            if (currentGameName) setStartTime(Date.now());
-        }
-        setIsLoading(false);
-    }, [currentGameName]);
-
-    useEffect(() => {
-        loadGameProgress();
-    }, [loadGameProgress]);
-
-    const saveGameProgress = async (progress: GameProgress) => {
-        console.log("Game progress saved before timeSpent:", progress);
-        if (!startTime) return;
-
-        const now = Date.now();
-        const duration = Math.floor((now - startTime) / 1000);
-
-        // 1️⃣ update UI immediately
-        // We set the timeSpent for this specific segment
-        progress.timeSpent = duration;
-
-        console.log("Game progress saved after timeSpent:", progress);
-        setGameProgress(progress);
-        localStorage.setItem("playlearn_game_progress", JSON.stringify(progress));
-
-        // 2️⃣ avoid duplicate calls
-        if (isSavingRef.current) return;
-
-        // Only reset the anchor after we've committed to a sync
-        setStartTime(now);
-        isSavingRef.current = true;
-
-        try {
-            // 3️⃣ sync to backend - Dispatch based on game name
-            switch (currentGameName) {
-                case "Word Builder":
-                    await saveWordBuilderProgressApi(progress);
-                    break;
-                default:
-                    await saveGameProgressApi(progress);
-                    break;
+    const calculateTime = async (state: boolean) => {
+        if (state) {
+            setStartTime(Date.now());
+            console.log("Game started, startTime set.");
+        } else {
+            if (!startTime) {
+                console.warn("calculateTime(false) called but startTime is null.");
+                return;
             }
-        } catch (err) {
-            console.error("Game progress sync failed:", err);
-        } finally {
-            isSavingRef.current = false;
+            const timeDiff = Date.now() - startTime;
+            console.log(`Saving progress for ${currentGameName}: ${timeDiff}ms`);
+
+            try {
+                await api.post("/game-progress/time", {
+                    game: currentGameName,
+                    timeSpent: timeDiff,
+                });
+                console.log("Time spent saved successfully.");
+            } catch (err) {
+                console.error("Failed to save time spent:", err);
+            }
+
+            const minutes = Math.floor(timeDiff / 60000);
+            const seconds = Math.floor((timeDiff % 60000) / 1000);
+            setStartTime(null);
+            return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         }
     };
 
 
-
     return (
         <GameProgressContext.Provider
-            value={{ gameProgress, saveGameProgress, loadGameProgress, isLoading, currentGameId, currentGameName }}
+            value={{ gameProgress, isLoading, currentGameId, currentGameName, startTime, calculateTime }}
         >
             {children}
         </GameProgressContext.Provider>

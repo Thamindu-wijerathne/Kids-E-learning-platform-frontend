@@ -1,7 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { notFound } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
 import Header from '@/components/header';
@@ -9,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { gamesList } from '@/lib/gamesConfig';
 import { useGameProgress } from '@/contexts/game-progress-context';
-import { useEffect } from 'react';
 import { ScoreCard } from '@/components/game-hud/ScoreCard';
 import { LevelCard } from '@/components/game-hud/LevelCard';
 
@@ -22,9 +20,15 @@ export default function GamePage() {
   const [score, setScore] = useState(0);
   const [level, setLevel] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
 
-  // const gameProgress = useGameProgress();
+  const { calculateTime } = useGameProgress();
+  const router = useRouter();
+
+  const handleBack = async () => {
+    await calculateTime(false);
+    router.push('/games');
+  };
+
 
   if (!game) {
     return (
@@ -53,11 +57,13 @@ export default function GamePage() {
 
       <section className="px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <Link href="/games">
-            <Button variant="outline" className="mb-4 rounded-lg bg-transparent">
-              ← Back to Games
-            </Button>
-          </Link>
+          <Button
+            variant="outline"
+            className="mb-4 rounded-lg bg-transparent"
+            onClick={handleBack}
+          >
+            ← Back to Games
+          </Button>
         </div>
       </section>
 
@@ -73,7 +79,10 @@ export default function GamePage() {
                       <div className="text-9xl mb-6 animate-bounce">{game.emoji}</div>
                       <h1 className="text-4xl font-bold text-white mb-4">{game.name}</h1>
                       <p className="text-white/90 text-lg mb-8 max-w-md">{game.description}</p>
-                      <Button size="lg" onClick={() => setIsPlaying(true)} className="bg-white text-foreground hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl font-bold">
+                      <Button size="lg" onClick={() => {
+                        setIsPlaying(true);
+                        calculateTime(true)
+                      }} className="bg-white text-foreground hover:bg-gray-100 text-xl px-10 py-6 rounded-2xl font-bold">
                         Start Game! 🎮
                       </Button>
                     </div>
@@ -81,7 +90,7 @@ export default function GamePage() {
                     <div className="w-full h-full flex items-center justify-center min-h-[400px]">
                       <GameComponent
                         onLevelUp={() => setLevel(l => l + 1)}
-                        onScoreUpdate={setScore}
+                        onScoreUpdate={(points: number) => setScore(prev => prev + points)}
                         level={level}
                         currentScore={score}
                       />
@@ -94,7 +103,7 @@ export default function GamePage() {
             {/* Right Sidebar - Dynamic HUD */}
             <div className="flex flex-col gap-6">
               {game.config.scoring?.enabled && (
-                <ScoreCard 
+                <ScoreCard
                   gameId={game.id}
                   currentScore={score}
                   scoringType={game.config.scoring.type}
@@ -102,7 +111,7 @@ export default function GamePage() {
               )}
 
               {game.config.leveling?.enabled && (
-                <LevelCard 
+                <LevelCard
                   gameId={game.id}
                   currentLevel={level}
                   maxLevel={game.config.leveling.maxLevel}
@@ -118,7 +127,7 @@ export default function GamePage() {
                   </div>
                 </div>
               </Card>
-              
+
             </div>
           </div>
         </div>

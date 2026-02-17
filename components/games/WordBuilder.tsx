@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { Card } from '@/components/ui/card';
 import HandwritingcheckCanvas from '../HandwritingcheckCanvas';
 import { WORD_COLLECTION } from '@/lib/word-builder-data';
-import { useGameProgress } from '@/contexts/game-progress-context';
 import { Butcherman } from 'next/font/google';
 import { Button } from '../ui/button';
 
@@ -23,7 +22,7 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
     const [shuffledPool, setShuffledPool] = useState<{ id: string; letter: string }[]>([]);
     const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
 
-    const { saveGameProgress } = useGameProgress();
+
 
     // Determine difficulty based on level
     const currentDifficulty = useMemo(() => {
@@ -59,17 +58,7 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
 
     const skipThisWord = () => {
         if (currentScore >= 50) {
-            onScoreUpdate?.(-50);
-
-            saveGameProgress({
-                game: "Word Builder",
-                level: level,
-                difficulty: currentDifficulty,
-                word: currentPair.word,
-                isCorrect: false,
-                scoreDelta: -50,
-                timestamp: Date.now(),
-            });
+            onScoreUpdate?.(currentScore - 50);
             initGame();
         }
     }
@@ -91,8 +80,8 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                         Goal: Recognize the emoji and draw the letters!
                     </p>
                     <span className={`px-4 py-1.5 rounded-2xl text-sm font-black uppercase tracking-widest shadow-lg ${currentDifficulty === 'easy' ? 'bg-emerald-400 text-emerald-950 shadow-emerald-500/20' :
-                            currentDifficulty === 'medium' ? 'bg-amber-400 text-amber-950 shadow-amber-500/20' :
-                                'bg-rose-500 text-white shadow-rose-900/20'
+                        currentDifficulty === 'medium' ? 'bg-amber-400 text-amber-950 shadow-amber-500/20' :
+                            'bg-rose-500 text-white shadow-rose-900/20'
                         }`}>
                         {currentDifficulty}
                     </span>
@@ -142,33 +131,13 @@ export default function WordBuilder({ onLevelUp, onScoreUpdate, gameData, level,
                             onResult={(isCorrect) => {
                                 if (isCorrect) {
                                     setFeedback('correct');
-                                    onScoreUpdate?.(10);
+                                    onScoreUpdate?.(currentScore + 10);
                                     onLevelUp?.();
-
-                                    saveGameProgress({
-                                        game: "Word Builder",
-                                        level: level + 1,
-                                        difficulty: currentDifficulty,
-                                        word: currentPair.word,
-                                        isCorrect: true,
-                                        scoreDelta: 10,
-                                        timestamp: Date.now(),
-                                    });
 
                                     setTimeout(initGame, 1200);
                                 } else {
                                     setFeedback('wrong');
 
-                                    saveGameProgress({
-                                        game: "Word Builder",
-                                        level: level,
-                                        difficulty: currentDifficulty,
-                                        word: currentPair.word,
-                                        isCorrect: false,
-                                        scoreDelta: 0,
-                                        timestamp: Date.now(),
-                                    });
-                                    
                                     setTimeout(() => setFeedback(null), 1500);
                                 }
                             }}

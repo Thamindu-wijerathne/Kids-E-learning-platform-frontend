@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { speechRecognizeApi } from '@/services/ai-service';
 
 type AudioRecorderRenderProps = {
   isRecording: boolean;
@@ -40,12 +41,7 @@ export default function AudioRecorder({
     formData.append(fieldName, file);
 
     try {
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
+      const data = await speechRecognizeApi(endpoint, formData);
       const recognizedText = data?.text || '';
       onText(recognizedText);
     } catch (err) {

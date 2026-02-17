@@ -152,7 +152,7 @@ export default function Progress() {
             <div className="text-4xl mb-2">⏱️</div>
             <p className="text-3xl font-bold text-primary">
               {user?.totalTimeSpent ?
-                `${Math.floor(user.totalTimeSpent / 60)}m ${user.totalTimeSpent % 60}s` :
+                `${Math.floor(user.totalTimeSpent / 60)}m ${Math.floor(user.totalTimeSpent % 60)}s` :
                 '0s'}
             </p>
             <p className="text-foreground/70 font-semibold">Total Time</p>
@@ -217,7 +217,11 @@ export default function Progress() {
                   </div>
                   <div className="text-center">
                     <p className="text-xl font-bold text-primary">
-                      {(game as any).timeSpent ? `${Math.floor((game as any).timeSpent / 60)}m` : '0m'}
+                      {game.timeSpent ?
+                        (game.timeSpent >= 60 ?
+                          `${Math.floor(game.timeSpent / 60)}m ${Math.floor(game.timeSpent % 60)}s` :
+                          `${Math.floor(game.timeSpent % 60)}s`) :
+                        '0s'}
                     </p>
                     <p className="text-xs text-foreground/70">Time</p>
                   </div>

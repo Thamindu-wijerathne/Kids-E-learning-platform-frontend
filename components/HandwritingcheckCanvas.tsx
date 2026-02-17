@@ -2,6 +2,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useEffect } from 'react';
+import { handwritingOcrApi } from '../services/ai-service';
 
 interface HandwritingCanvasProps {
     expectedWord: string;
@@ -128,12 +129,7 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
             });
 
             try {
-                const res = await fetch('http://localhost:8000/ocr/handwriting-ocr', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                const data = await res.json();
+                const data = await handwritingOcrApi(formData);
 
                 // OCR text
                 const rawText = data.text.map((t: any) => t[1]).join('');
@@ -142,8 +138,7 @@ export default function HandwritingcheckCanvas({ expectedWord, onResult }: Handw
 
                 setResult(detected);
 
-                // onResult(detected === expected);
-                onResult(true);
+                onResult(detected === expected);
             } catch (err) {
                 console.error(err);
             } finally {

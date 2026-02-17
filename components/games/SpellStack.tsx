@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HandwritingCanvas } from '@/components/HandwritingCanvas';
 
 interface LetterBlock {
@@ -112,21 +112,21 @@ export function SpellStack({ onScoreUpdate }: SpellStackProps) {
     try {
       const resp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
       if (resp.ok) {
-        setGrid(prevGrid => 
-          prevGrid.map(b => 
+        setGrid(prevGrid =>
+          prevGrid.map(b =>
             blocksToRemove.includes(b.id) ? { ...b, state: 'correct' as const } : b
           )
         );
 
         setTimeout(() => {
-          setGrid(prevGrid => 
-            prevGrid.map(b => 
+          setGrid(prevGrid =>
+            prevGrid.map(b =>
               blocksToRemove.includes(b.id) ? { ...b, state: 'exploding' as const } : b
             )
           );
 
           setTimeout(() => {
-            setGrid(prevGrid => 
+            setGrid(prevGrid =>
               applyGravity(prevGrid.filter(b => !blocksToRemove.includes(b.id)))
             );
           }, 500);
@@ -148,13 +148,13 @@ export function SpellStack({ onScoreUpdate }: SpellStackProps) {
   return (
     <div className="min-h-screen bg-[#E9F5F2] p-6 md:p-12 font-sans text-slate-700 flex items-center justify-center">
       <div className="max-w-4xl w-full">
-        
+
         <div className="flex flex-row items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-black tracking-tight text-slate-800">SpellStack</h1>
             {/* <p className="text-xs font-bold text-emerald-600 uppercase tracking-widest">Score: {score}</p> */}
           </div>
-          
+
           <div className="flex gap-3">
             {!gameStarted ? (
               <button onClick={() => { setGrid([]); setScore(0); setGameOver(false); setGameStarted(true); }} className="px-6 py-2 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-700 transition-all shadow-sm">
@@ -169,25 +169,25 @@ export function SpellStack({ onScoreUpdate }: SpellStackProps) {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
+
           <div className="w-full lg:w-[320px] shrink-0">
             <div className="relative p-1.5 bg-white rounded-2xl shadow-sm">
-              <div 
+              <div
                 className={`grid gap-0.5 bg-slate-50 rounded-xl overflow-hidden transition-all duration-300 ${gamePaused ? 'blur-sm opacity-20' : 'opacity-100'}`}
-                style={{ 
+                style={{
                   gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-                  aspectRatio: `${GRID_COLS}/${GRID_ROWS}` 
+                  aspectRatio: `${GRID_COLS}/${GRID_ROWS}`
                 }}
               >
                 {Array.from({ length: GRID_ROWS * GRID_COLS }).map((_, i) => {
                   const r = Math.floor(i / GRID_COLS);
                   const c = i % GRID_COLS;
                   const block = grid.find(b => b.row === r && b.col === c);
-                  
+
                   return (
                     <div key={i} className="bg-white flex items-center justify-center aspect-square border-[0.5px] border-slate-100">
                       {block && (
-                        <div 
+                        <div
                           className={`w-full h-full flex items-center justify-center text-slate-700 text-lg font-black transition-all
                             ${block.state === 'normal' ? 'bg-slate-100 animate-in zoom-in-90' : ''}
                             ${block.state === 'correct' ? 'bg-emerald-400 text-white scale-110' : ''}
@@ -214,18 +214,17 @@ export function SpellStack({ onScoreUpdate }: SpellStackProps) {
           </div>
 
           <div className="flex-1 w-full flex flex-col gap-4">
-            
-            <div className={`h-10 flex items-center px-4 rounded-xl text-xs font-bold transition-all ${
-              message.type === 'error' ? 'text-rose-500' : 
+
+            <div className={`h-10 flex items-center px-4 rounded-xl text-xs font-bold transition-all ${message.type === 'error' ? 'text-rose-500' :
               message.type === 'success' ? 'text-emerald-600' : 'text-slate-400'
-            }`}>
+              }`}>
               {message.text}
             </div>
 
             <div className="bg-white rounded-2xl p-6 shadow-sm flex flex-col gap-6">
-              
+
               <div className="flex items-stretch gap-2 h-11">
-                <input 
+                <input
                   type="text"
                   value={inputWord}
                   onChange={(e) => setInputWord(e.target.value.toUpperCase())}
@@ -234,7 +233,7 @@ export function SpellStack({ onScoreUpdate }: SpellStackProps) {
                   disabled={!gameStarted || gamePaused}
                   className="w-2/3 bg-slate-50 rounded-lg px-4 font-bold text-sm focus:outline-none focus:ring-1 focus:ring-emerald-400 transition-all uppercase"
                 />
-                <button 
+                <button
                   onClick={() => handleSubmitWord()}
                   disabled={isValidating || !gameStarted || gamePaused || inputWord.length < 2}
                   className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-bold text-sm transition-all disabled:opacity-30 flex items-center justify-center"
@@ -248,9 +247,9 @@ export function SpellStack({ onScoreUpdate }: SpellStackProps) {
               <div className="flex flex-col items-center">
                 <div className="bg-slate-50 rounded-xl p-3 w-full overflow-hidden flex justify-center">
                   <div className="scale-90 origin-center">
-                    <HandwritingCanvas 
+                    <HandwritingCanvas
                       onWordRecognized={handleSubmitWord}
-                      width={300} 
+                      width={300}
                       height={120}
                     />
                   </div>

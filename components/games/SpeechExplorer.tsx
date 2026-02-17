@@ -70,7 +70,7 @@ export default function SpeechExplorer({ onLevelUp, onScoreUpdate, level, curren
 
             {/* Recording Controls */}
             <AudioRecorder
-                endpoint="http://localhost:8000/speech-recognize/speech-recognize-word"
+                endpoint="/speech-recognize/speech-recognize-word"
                 onText={(recognizedText) => {
                     setResult(recognizedText);
 
@@ -124,8 +124,8 @@ export default function SpeechExplorer({ onLevelUp, onScoreUpdate, level, curren
                                 onClick={isRecording ? stop : start}
                                 disabled={loading}
                                 className={`w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300 shadow-2xl border-4 ${isRecording
-                                        ? 'bg-red-500 border-red-300 scale-110 hover:bg-red-600'
-                                        : 'bg-white border-white/50 hover:scale-105 hover:shadow-indigo-500/30'
+                                    ? 'bg-red-500 border-red-300 scale-110 hover:bg-red-600'
+                                    : 'bg-white border-white/50 hover:scale-105 hover:shadow-indigo-500/30'
                                     } disabled:opacity-50 disabled:cursor-not-allowed group`}
                             >
                                 {isRecording ? (
