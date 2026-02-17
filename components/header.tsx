@@ -27,6 +27,9 @@ export default function Header() {
             <Link href="/games" className="hover:text-accent transition-colors font-semibold">
               Games
             </Link>
+            <Link href="/chat" className="hover:text-accent transition-colors font-semibold">
+              Chat
+            </Link>
             <Link href="/progress" className="hover:text-accent transition-colors font-semibold">
               Progress
             </Link>

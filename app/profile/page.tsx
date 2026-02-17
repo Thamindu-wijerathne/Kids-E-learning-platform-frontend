@@ -175,7 +175,7 @@ export default function Profile() {
         </Card>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {stats.map((stat, idx) => (
             <Card key={idx} className="p-6 text-center shadow-lg hover:shadow-xl transition-shadow">
               <div className="text-5xl mb-3">{stat.icon}</div>
@@ -183,7 +183,7 @@ export default function Profile() {
               <p className="text-foreground/70 font-semibold">{stat.label}</p>
             </Card>
           ))}
-        </div>
+        </div> */}
 
         {/* Recent Achievements */}
         <div className="mb-12">

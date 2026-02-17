@@ -9,3 +9,9 @@ export const updateCustomizations = async (customizations: { avatar?: string, th
     const response = await api.put("/user/customizations", customizations);
     return response.data;
 };
+
+export const sendMessageToPublicChat = async (message: string) => {
+    console.log("Sending message to public chat: ", message);
+    const response = await api.post("/chat/public", { message });
+    return response.data;
+}
