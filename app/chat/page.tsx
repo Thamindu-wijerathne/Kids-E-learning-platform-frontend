@@ -19,6 +19,7 @@ export default function ChatPage() {
 
     // WebSocket connection
     useEffect(() => {
+        
         const wsUrl = process.env.NEXT_PUBLIC_WS_URL + "/chat/ws/public";
         const ws = new WebSocket(wsUrl);
         wsRef.current = ws;

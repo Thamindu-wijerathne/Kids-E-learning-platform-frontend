@@ -18,6 +18,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
+  const [ageGroup, setAgeGroup] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login, signup } = useAuth();
@@ -31,7 +32,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
       if (mode === 'login') {
         await login(email, password);
       } else {
-        await signup(name, email, password);
+        await signup(name, email, ageGroup, password);
       }
       onClose();
       window.location.reload();
